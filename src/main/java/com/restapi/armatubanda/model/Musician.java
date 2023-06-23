@@ -39,12 +39,6 @@ public class Musician implements UserDetails {
     @Column(name = "musician_id")
     private int id;
 
-    @Column(name = "musician_name")
-    private String name;
-
-    @Column(name = "musician_lastname")
-    private String lastname;
-
     @Email
     @NaturalId(mutable = true)
     @Column(unique = true)
@@ -55,8 +49,10 @@ public class Musician implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
-    private String country;
-    private String city;
+
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "musician_contact_information_id")
+    private MusicianContactInformation musicianContactInformation;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
