@@ -7,6 +7,7 @@ import com.restapi.armatubanda.services.MusicianService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,6 @@ public class MusicianController {
     public ResponseEntity<Musician> setBasicInformation(@RequestBody ProfileCreationDto profileInfoDto){
         var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = ((UserDetails) principal).getUsername();
-        System.out.print(username);
         Musician musicianToSave = musicianService.getMusician(username).orElseThrow(()-> new UsernameNotFoundException("User not found"));
         var musicianContactInformation = MusicianContactInformation.builder()
                 .name(profileInfoDto.getName())
@@ -37,6 +37,15 @@ public class MusicianController {
         musicianService.save(musicianToSave);
         return ResponseEntity.ok(musicianToSave);
     }
+
+    @GetMapping("/basicinfo")
+    public MusicianContactInformation getContactInformation(){
+        var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = ((UserDetails) principal).getUsername();
+        Musician musician = musicianService.getMusician(username).orElseThrow(()->new UsernameNotFoundException("User not found"));
+        return musician.getMusicianContactInformation();
+    }
+
 
 
 

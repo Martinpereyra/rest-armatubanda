@@ -1,5 +1,6 @@
 package com.restapi.armatubanda.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +27,7 @@ public class MusicianContactInformation {
                     @Parameter(name = "increment_size", value = "1")
             }
     )
+    @JsonIgnore
     private int id;
     private String name;
     private String lastname;
