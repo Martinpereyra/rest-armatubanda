@@ -25,11 +25,10 @@ public class AuthenticationService {
 
     public AuthenticationResponse register(RegisterRequest request) {
         var musician = Musician.builder()
-                .name(request.getName())
-                .lastname(request.getLastname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
+                .isProfileSet(false)
                 .build();
         musicianRepository.save(musician);
         var jwtToken = jwtService.generateToken(musician);

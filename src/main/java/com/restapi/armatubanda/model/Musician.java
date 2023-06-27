@@ -39,12 +39,6 @@ public class Musician implements UserDetails {
     @Column(name = "musician_id")
     private int id;
 
-    @Column(name = "musician_name")
-    private String name;
-
-    @Column(name = "musician_lastname")
-    private String lastname;
-
     @Email
     @NaturalId(mutable = true)
     @Column(unique = true)
@@ -55,8 +49,19 @@ public class Musician implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
-    private String country;
-    private String city;
+
+    private boolean isProfileSet;
+
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "musician_contact_information_id")
+    private MusicianContactInformation musicianContactInformation;
+
+    @ElementCollection
+    @CollectionTable(
+            name="musician_instrument_table",
+            joinColumns = @JoinColumn(name = "musician_id")
+    )
+    private List<Instrument> instrument;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -92,4 +97,7 @@ public class Musician implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
+
 }
