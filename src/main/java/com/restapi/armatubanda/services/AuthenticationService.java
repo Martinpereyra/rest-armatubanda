@@ -28,6 +28,7 @@ public class AuthenticationService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
+                .isProfileSet(false)
                 .build();
         musicianRepository.save(musician);
         var jwtToken = jwtService.generateToken(musician);

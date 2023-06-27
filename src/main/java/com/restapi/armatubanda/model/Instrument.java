@@ -7,15 +7,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Parameter;
-
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Embeddable
 @Entity
-public class MusicianContactInformation {
+public class Instrument {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO,generator = "userSequenceGenerator")
     @GenericGenerator(
@@ -27,22 +28,10 @@ public class MusicianContactInformation {
                     @Parameter(name = "increment_size", value = "1")
             }
     )
-    @JsonIgnore
+    @Column(name = "instrument_id")
     private int id;
+    @NaturalId
     private String name;
-    private String lastname;
-
-    private String stageName;
-
-    private String bio;
-    private String country;
-    private String city;
-    private String phoneNumber;
-
-    private String webSite;
-
-    private String socialMediaLink;
-
-
 
 }
+

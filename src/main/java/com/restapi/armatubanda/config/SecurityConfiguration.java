@@ -29,6 +29,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests((requests)->requests
                         .requestMatchers("/api/bands/**","/api/musician/**").authenticated()
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/admin/**").permitAll()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)

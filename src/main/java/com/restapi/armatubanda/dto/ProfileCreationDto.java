@@ -1,10 +1,14 @@
 package com.restapi.armatubanda.dto;
 
 
+import com.restapi.armatubanda.model.Instrument;
+import com.restapi.armatubanda.model.MusicianContactInformation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -12,12 +16,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProfileCreationDto {
 
-    private String name;
-    private String lastname;
-    private String country;
-    private String city;
-    private String phoneNumber;
-    private String webSite;
-    private String socialMediaLink;
+    private MusicianContactInformation musicianContactInformation;
+
+    private List<Instrument> instruments;
+
+
 
 }
