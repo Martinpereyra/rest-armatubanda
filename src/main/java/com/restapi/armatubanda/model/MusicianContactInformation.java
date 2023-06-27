@@ -37,6 +37,7 @@ public class MusicianContactInformation {
     private String bio;
     private String country;
     private String city;
+
     private String phoneNumber;
 
     private String webSite;
