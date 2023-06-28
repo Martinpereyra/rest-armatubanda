@@ -24,5 +24,9 @@ public class InstrumentController{
         return instrumentService.getAll();
     }
 
+    @DeleteMapping("{id}")
+    public String delete(@PathVariable("id") int id) {
+        return instrumentService.delete(id);
+    }
 
 }

@@ -26,4 +26,13 @@ public class InstrumentService {
     }
 
     public List<Instrument> getAll() { return instrumentRepository.findAll(); }
+
+    public String delete(int id) {
+        if (instrumentRepository.existsById(id)) {
+            instrumentRepository.deleteById(id);
+            return "Instrumento eliminado correctamente";
+        } else {
+            return "El instrumento con ID " + id + " no existe";
+        }
+    }
 }
