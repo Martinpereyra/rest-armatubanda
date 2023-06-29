@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,5 +23,16 @@ public class InstrumentService {
 
     public Optional<Instrument> getInstrument(String name) {
         return instrumentRepository.findInstrumentByName(name);
+    }
+
+    public List<Instrument> getAll() { return instrumentRepository.findAll(); }
+
+    public String delete(int id) {
+        if (instrumentRepository.existsById(id)) {
+            instrumentRepository.deleteById(id);
+            return "Instrumento eliminado correctamente";
+        } else {
+            return "El instrumento con ID " + id + " no existe";
+        }
     }
 }

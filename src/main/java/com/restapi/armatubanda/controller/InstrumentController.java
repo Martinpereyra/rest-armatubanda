@@ -5,6 +5,7 @@ import com.restapi.armatubanda.services.InstrumentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/instrument")
@@ -18,6 +19,14 @@ public class InstrumentController{
         return instrumentService.create(instrumentName);
     }
 
+    @GetMapping()
+    public List<Instrument> getAll() {
+        return instrumentService.getAll();
+    }
 
+    @DeleteMapping("{id}")
+    public String delete(@PathVariable("id") int id) {
+        return instrumentService.delete(id);
+    }
 
 }
