@@ -10,6 +10,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/instrument")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200",maxAge = 3600)
 public class InstrumentController{
     private final InstrumentService instrumentService;
 

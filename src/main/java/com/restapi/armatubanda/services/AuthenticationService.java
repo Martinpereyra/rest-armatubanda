@@ -34,6 +34,7 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(musician);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
+                .email(musician.getEmail())
                 .build();
     }
 
@@ -49,6 +50,7 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(musician);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
+                .email(musician.getEmail())
                 .build();
     }
 }
