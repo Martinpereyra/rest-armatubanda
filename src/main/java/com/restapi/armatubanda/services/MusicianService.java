@@ -56,12 +56,14 @@ public class MusicianService {
         musicianToSave.setMusicianContactInformation(musicianContactInformation);
         musicianToSave.setInstrument(instrumentsToSave);
         musicianToSave.setProfileSet(true);
-        musicianToSave.setImage(image);
-        musicianRepository.save(musicianToSave);
         ProfileCreationDto fullProfile = new ProfileCreationDto();
         fullProfile.setMusicianContactInformation(musicianToSave.getMusicianContactInformation());
         fullProfile.setInstruments(musicianToSave.getInstrument());
-        fullProfile.setProfileImage(musicianToSave.getImage());
+        if(image != null) {
+            musicianToSave.setImage(image);
+            fullProfile.setProfileImage(musicianToSave.getImage());
+        }
+        musicianRepository.save(musicianToSave);
         return ResponseEntity.ok(fullProfile);
     }
 

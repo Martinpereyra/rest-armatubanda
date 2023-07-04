@@ -26,17 +26,21 @@ public class MusicianController {
 
     private final MusicianService musicianService;
 
+    // TODO: Implement try-catch
     @PutMapping(value = "/create-profile", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ProfileCreationDto> createProfile(@RequestPart("musician") ProfileCreationDto profileInfoDto,
-                                                            @RequestPart("profileImageFile")MultipartFile file) throws Exception {
+                                                            @RequestPart(value = "profileImageFile", required = false)MultipartFile file) throws Exception {
         var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = ((UserDetails) principal).getUsername();
         Musician musicianToSave = musicianService.getMusician(username).orElseThrow(()-> new UsernameNotFoundException("User not found"));
         if(!musicianToSave.isProfileSet()){
         MusicianContactInformation contactInformation = profileInfoDto.getMusicianContactInformation();
         List<Instrument> musicianInstrument = profileInfoDto.getInstruments();
-        Image image = musicianService.uploadProfileImage(file);
-        return musicianService.createProfile(musicianToSave,contactInformation,musicianInstrument, image);
+        Image image = null;
+        if(file != null) {
+            image = musicianService.uploadProfileImage(file);
+        }
+            return musicianService.createProfile(musicianToSave,contactInformation,musicianInstrument, image);
         }else{
             throw new Exception("No se puede registrar");
         }
