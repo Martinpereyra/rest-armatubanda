@@ -1,17 +1,20 @@
 package com.restapi.armatubanda.controller;
 
 import com.restapi.armatubanda.dto.ProfileCreationDto;
+import com.restapi.armatubanda.model.Image;
 import com.restapi.armatubanda.model.Instrument;
 import com.restapi.armatubanda.model.Musician;
 import com.restapi.armatubanda.model.MusicianContactInformation;
 import com.restapi.armatubanda.services.MusicianService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -23,15 +26,21 @@ public class MusicianController {
 
     private final MusicianService musicianService;
 
-    @PutMapping("/create-profile")
-    public ResponseEntity<ProfileCreationDto> createProfile(@RequestBody ProfileCreationDto profileInfoDto) throws Exception {
+    // TODO: Implement try-catch
+    @PutMapping(value = "/create-profile", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ProfileCreationDto> createProfile(@RequestPart("musician") ProfileCreationDto profileInfoDto,
+                                                            @RequestPart(value = "profileImageFile", required = false)MultipartFile file) throws Exception {
         var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = ((UserDetails) principal).getUsername();
         Musician musicianToSave = musicianService.getMusician(username).orElseThrow(()-> new UsernameNotFoundException("User not found"));
         if(!musicianToSave.isProfileSet()){
         MusicianContactInformation contactInformation = profileInfoDto.getMusicianContactInformation();
         List<Instrument> musicianInstrument = profileInfoDto.getInstruments();
-        return musicianService.createProfile(musicianToSave,contactInformation,musicianInstrument);
+        Image image = null;
+        if(file != null) {
+            image = musicianService.uploadProfileImage(file);
+        }
+            return musicianService.createProfile(musicianToSave,contactInformation,musicianInstrument, image);
         }else{
             throw new Exception("No se puede registrar");
         }

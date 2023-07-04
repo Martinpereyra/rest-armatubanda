@@ -1,6 +1,7 @@
 package com.restapi.armatubanda.services;
 
 import com.restapi.armatubanda.dto.ProfileCreationDto;
+import com.restapi.armatubanda.model.Image;
 import com.restapi.armatubanda.model.Instrument;
 import com.restapi.armatubanda.model.Musician;
 import com.restapi.armatubanda.model.MusicianContactInformation;
@@ -9,8 +10,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +30,12 @@ public class MusicianService {
     }
 
 
-    public ResponseEntity<ProfileCreationDto> createProfile(Musician musicianToSave, MusicianContactInformation contactInformation, List<Instrument> instruments){
+    public ResponseEntity<ProfileCreationDto> createProfile(
+            Musician musicianToSave,
+            MusicianContactInformation contactInformation,
+            List<Instrument> instruments,
+            Image image)
+    {
         var musicianContactInformation = MusicianContactInformation.builder()
                 .name(contactInformation.getName())
                 .lastname(contactInformation.getLastname())
@@ -47,13 +56,23 @@ public class MusicianService {
         musicianToSave.setMusicianContactInformation(musicianContactInformation);
         musicianToSave.setInstrument(instrumentsToSave);
         musicianToSave.setProfileSet(true);
-        musicianRepository.save(musicianToSave);
         ProfileCreationDto fullProfile = new ProfileCreationDto();
         fullProfile.setMusicianContactInformation(musicianToSave.getMusicianContactInformation());
         fullProfile.setInstruments(musicianToSave.getInstrument());
+        if(image != null) {
+            musicianToSave.setImage(image);
+            fullProfile.setProfileImage(musicianToSave.getImage());
+        }
+        musicianRepository.save(musicianToSave);
         return ResponseEntity.ok(fullProfile);
     }
 
-
+    public Image uploadProfileImage(MultipartFile file) throws IOException {
+        return Image.builder()
+                .name(file.getOriginalFilename())
+                .type(file.getContentType())
+                .picByte(file.getBytes())
+                .build();
+    }
 
 }
