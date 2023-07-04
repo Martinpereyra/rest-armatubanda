@@ -63,6 +63,17 @@ public class Musician implements UserDetails {
     )
     private List<Instrument> instrument;
 
+    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinTable(name = "musician_image",
+        joinColumns = {
+            @JoinColumn(name = "musician_id")
+        },
+        inverseJoinColumns = {
+            @JoinColumn(name = "image_id")
+        }
+    )
+    private Image image;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
