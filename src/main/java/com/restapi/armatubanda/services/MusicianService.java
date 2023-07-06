@@ -8,6 +8,8 @@ import com.restapi.armatubanda.model.MusicianContactInformation;
 import com.restapi.armatubanda.repository.MusicianRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -75,4 +77,13 @@ public class MusicianService {
                 .build();
     }
 
+    public ResponseEntity<Musician> updateProfileImage(MultipartFile file) throws IOException {
+        var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = ((UserDetails) principal).getUsername();
+        Musician musician = getMusician(username).orElseThrow(()-> new UsernameNotFoundException("User not found"));
+        Image image = uploadProfileImage(file);
+        musician.setImage(image);
+        musicianRepository.save(musician);
+        return ResponseEntity.ok(musician);
+    }
 }
