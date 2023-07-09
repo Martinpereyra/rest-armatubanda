@@ -3,14 +3,21 @@ package com.restapi.armatubanda.services;
 import com.restapi.armatubanda.auth.AuthenticationRequest;
 import com.restapi.armatubanda.auth.AuthenticationResponse;
 import com.restapi.armatubanda.auth.RegisterRequest;
+import com.restapi.armatubanda.dto.UserInfoDto;
 import com.restapi.armatubanda.model.Role;
 import com.restapi.armatubanda.repository.MusicianRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.restapi.armatubanda.model.Musician;
+import org.springframework.web.ErrorResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +29,8 @@ public class AuthenticationService {
     private final JwtService jwtService;
 
     private final AuthenticationManager authenticationManager;
+
+    private final UserDetailsService userDetailsService;
 
     public AuthenticationResponse register(RegisterRequest request) {
         var musician = Musician.builder()
@@ -52,5 +61,19 @@ public class AuthenticationService {
                 .token(jwtToken)
                 .email(musician.getEmail())
                 .build();
+    }
+
+    public ResponseEntity<UserInfoDto> getUserLogged() {
+        var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal == null){
+            return null;
+        }
+        String username = ((UserDetails) principal).getUsername();
+        UserInfoDto userInfoDto = UserInfoDto.builder()
+                .user(username)
+                .build();
+
+        return ResponseEntity.ok(userInfoDto);
+
     }
 }
