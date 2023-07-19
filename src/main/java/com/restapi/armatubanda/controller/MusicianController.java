@@ -1,10 +1,7 @@
 package com.restapi.armatubanda.controller;
 
 import com.restapi.armatubanda.dto.ProfileCreationDto;
-import com.restapi.armatubanda.model.Image;
-import com.restapi.armatubanda.model.Instrument;
-import com.restapi.armatubanda.model.Musician;
-import com.restapi.armatubanda.model.MusicianContactInformation;
+import com.restapi.armatubanda.model.*;
 import com.restapi.armatubanda.services.MusicianService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -61,6 +58,10 @@ public class MusicianController {
     }
 
 
+    @PutMapping(value = "/upload-review")
+    public ResponseEntity<List<Review>> uploadMusicianReview (@RequestBody Review review) {
+        return musicianService.uploadMusicianReview(review);
+    }
 
 
 
