@@ -1,10 +1,7 @@
 package com.restapi.armatubanda.services;
 
 import com.restapi.armatubanda.dto.ProfileCreationDto;
-import com.restapi.armatubanda.model.Image;
-import com.restapi.armatubanda.model.Instrument;
-import com.restapi.armatubanda.model.Musician;
-import com.restapi.armatubanda.model.MusicianContactInformation;
+import com.restapi.armatubanda.model.*;
 import com.restapi.armatubanda.repository.MusicianRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -85,5 +82,26 @@ public class MusicianService {
         musician.setImage(image);
         musicianRepository.save(musician);
         return ResponseEntity.ok(musician);
+    }
+
+    public ResponseEntity<List<Review>> uploadMusicianReview(Review review) throws Exception {
+        Musician musician = musicianRepository.findById(review.getMusicianId()).orElseThrow(()-> new UsernameNotFoundException("User not found"));
+        Musician reviewer = musicianRepository.findById(review.getReviewerId()).orElseThrow(()-> new UsernameNotFoundException("User not found"));
+        if (!reviewer.isProfileSet() || !musician.isProfileSet()) {
+            throw new Exception("Profile is not set");
+        }
+        List<Review> reviews = musician.getReviews();
+        if (reviews.isEmpty()) {
+            reviews = new ArrayList<>();
+        }
+        var newReview = Review.builder()
+                .comment(review.getComment())
+                .musicianId(review.getMusicianId())
+                .reviewerId(review.getReviewerId())
+                .build();
+        reviews.add(newReview);
+        musician.setReviews(reviews);
+        musicianRepository.save(musician);
+        return ResponseEntity.ok(reviews);
     }
 }
