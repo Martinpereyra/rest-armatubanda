@@ -84,8 +84,12 @@ public class MusicianService {
         return ResponseEntity.ok(musician);
     }
 
-    public ResponseEntity<List<Review>> uploadMusicianReview(Review review) {
+    public ResponseEntity<List<Review>> uploadMusicianReview(Review review) throws Exception {
         Musician musician = musicianRepository.findById(review.getMusicianId()).orElseThrow(()-> new UsernameNotFoundException("User not found"));
+        Musician reviewer = musicianRepository.findById(review.getReviewerId()).orElseThrow(()-> new UsernameNotFoundException("User not found"));
+        if (!reviewer.isProfileSet() || !musician.isProfileSet()) {
+            throw new Exception("Profile is not set");
+        }
         List<Review> reviews = musician.getReviews();
         if (reviews.isEmpty()) {
             reviews = new ArrayList<>();
@@ -97,6 +101,7 @@ public class MusicianService {
                 .build();
         reviews.add(newReview);
         musician.setReviews(reviews);
+        musicianRepository.save(musician);
         return ResponseEntity.ok(reviews);
     }
 }

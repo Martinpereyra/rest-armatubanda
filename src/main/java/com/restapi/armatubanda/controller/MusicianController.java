@@ -59,7 +59,7 @@ public class MusicianController {
 
 
     @PutMapping(value = "/upload-review")
-    public ResponseEntity<List<Review>> uploadMusicianReview (@RequestBody Review review) {
+    public ResponseEntity<List<Review>> uploadMusicianReview (@RequestBody Review review) throws Exception {
         return musicianService.uploadMusicianReview(review);
     }
 
