@@ -60,6 +60,7 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .email(musician.getEmail())
+                .isProfileSet(musician.booleanToString())
                 .build();
     }
 
@@ -69,8 +70,10 @@ public class AuthenticationService {
             return null;
         }
         String username = ((UserDetails) principal).getUsername();
+        var musician = musicianRepository.findByEmail(username).orElseThrow();
         UserInfoDto userInfoDto = UserInfoDto.builder()
                 .user(username)
+                .isProfileSet(musician.booleanToString())
                 .build();
 
         return ResponseEntity.ok(userInfoDto);

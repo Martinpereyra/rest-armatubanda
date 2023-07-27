@@ -14,4 +14,6 @@ public class UserInfoDto {
 
     private String user;
 
+    private String isProfileSet;
+
 }

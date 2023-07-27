@@ -112,6 +112,10 @@ public class Musician implements UserDetails {
         return true;
     }
 
+    public String booleanToString(){
+        return this.isProfileSet ? "true" : "false";
+    }
+
 
 
 }

@@ -8,24 +8,24 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin/instrument")
+@RequestMapping("/api")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200",maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:4200")
 public class InstrumentController{
     private final InstrumentService instrumentService;
 
 
-    @PostMapping("/add/{name}")
+    @PostMapping("/admin/instrument/add/{name}")
     public ResponseEntity<Instrument> create(@PathVariable("name") String instrumentName){
         return instrumentService.create(instrumentName);
     }
 
-    @GetMapping()
+    @GetMapping("/instrument/all")
     public List<Instrument> getAll() {
         return instrumentService.getAll();
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/instrument/{id}")
     public String delete(@PathVariable("id") int id) {
         return instrumentService.delete(id);
     }
