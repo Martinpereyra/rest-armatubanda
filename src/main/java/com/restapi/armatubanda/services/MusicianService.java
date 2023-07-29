@@ -1,5 +1,7 @@
 package com.restapi.armatubanda.services;
 
+import com.restapi.armatubanda.dto.MusicianRequestDto;
+import com.restapi.armatubanda.dto.MusicianResponseDto;
 import com.restapi.armatubanda.dto.ProfileCreationDto;
 import com.restapi.armatubanda.model.*;
 import com.restapi.armatubanda.repository.MusicianRepository;
@@ -53,11 +55,11 @@ public class MusicianService {
             instrumentsToSave.add(instrumentService.getInstrument(instrument.getName()).orElseThrow(()-> new UsernameNotFoundException("Instrument not found")));
         }
         musicianToSave.setMusicianContactInformation(musicianContactInformation);
-        musicianToSave.setInstrument(instrumentsToSave);
+        musicianToSave.setInstruments(instrumentsToSave);
         musicianToSave.setProfileSet(true);
         ProfileCreationDto fullProfile = new ProfileCreationDto();
         fullProfile.setMusicianContactInformation(musicianToSave.getMusicianContactInformation());
-        fullProfile.setInstruments(musicianToSave.getInstrument());
+        fullProfile.setInstruments(musicianToSave.getInstruments());
         if(image != null) {
             musicianToSave.setImage(image);
             fullProfile.setProfileImage(musicianToSave.getImage());
@@ -103,5 +105,21 @@ public class MusicianService {
         musician.setReviews(reviews);
         musicianRepository.save(musician);
         return ResponseEntity.ok(reviews);
+    }
+
+    public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(MusicianRequestDto request) {
+        List<Musician> musicians = musicianRepository.findAll(request.getName(), request.getCity(), request.getInstruments());
+        List<MusicianResponseDto> responseMusicians = new ArrayList<>();
+        musicians.forEach(musician -> {
+            var responseMusician = MusicianResponseDto.builder()
+                    .id(musician.getId())
+                    .musicianContactInformation(musician.getMusicianContactInformation())
+                    .instruments(musician.getInstruments())
+                    .profileImage(musician.getImage())
+                    .reviews(musician.getReviews())
+                    .build();
+            responseMusicians.add(responseMusician);
+        });
+        return ResponseEntity.ok(responseMusicians);
     }
 }

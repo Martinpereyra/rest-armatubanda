@@ -1,5 +1,7 @@
 package com.restapi.armatubanda.controller;
 
+import com.restapi.armatubanda.dto.MusicianRequestDto;
+import com.restapi.armatubanda.dto.MusicianResponseDto;
 import com.restapi.armatubanda.dto.ProfileCreationDto;
 import com.restapi.armatubanda.model.*;
 import com.restapi.armatubanda.services.MusicianService;
@@ -23,6 +25,11 @@ import java.util.List;
 public class MusicianController {
 
     private final MusicianService musicianService;
+
+    @GetMapping()
+    public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(@ModelAttribute MusicianRequestDto request) {
+        return musicianService.getMusiciansList(request);
+    }
 
     // TODO: Implement try-catch
     @PutMapping(value = "/create-profile", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
