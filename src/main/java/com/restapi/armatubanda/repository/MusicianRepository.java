@@ -19,5 +19,5 @@ public interface MusicianRepository extends JpaRepository<Musician, Integer> {
             "WHERE c.name LIKE %?1% OR " +
             "c.city LIKE %?2% OR " +
             "i.name IN ?3")
-    List<Musician> findAll(String name, String city, List<String> instruments);
+    List<Musician> findBy(String name, String city, List<String> instruments);
 }

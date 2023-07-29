@@ -108,7 +108,12 @@ public class MusicianService {
     }
 
     public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(MusicianRequestDto request) {
-        List<Musician> musicians = musicianRepository.findAll(request.getName(), request.getCity(), request.getInstruments());
+        List<Musician> musicians;
+        if (request.getName() == null && request.getCity() == null && request.getInstruments() == null) {
+            musicians = musicianRepository.findAll();
+        } else {
+            musicians = musicianRepository.findBy(request.getName(), request.getCity(), request.getInstruments());
+        }
         List<MusicianResponseDto> responseMusicians = new ArrayList<>();
         musicians.forEach(musician -> {
             var responseMusician = MusicianResponseDto.builder()
