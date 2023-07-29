@@ -61,17 +61,10 @@ public class Musician implements UserDetails {
             name="musician_instrument_table",
             joinColumns = @JoinColumn(name = "musician_id")
     )
-    private List<Instrument> instrument;
+    private List<Instrument> instruments;
 
     @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinTable(name = "musician_image",
-        joinColumns = {
-            @JoinColumn(name = "musician_id")
-        },
-        inverseJoinColumns = {
-            @JoinColumn(name = "image_id")
-        }
-    )
+    @JoinColumn(name = "musician_image_id")
     private Image image;
 
     @OneToMany(cascade = CascadeType.ALL)
