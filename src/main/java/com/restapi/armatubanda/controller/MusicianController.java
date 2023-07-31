@@ -21,7 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/musician")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200",maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:4200")
 public class MusicianController {
 
     private final MusicianService musicianService;
