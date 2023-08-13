@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -110,7 +111,10 @@ public class MusicianService {
     public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(MusicianRequestDto request) {
         List<Musician> musicians;
         if (request.getName() == null && request.getCity() == null && request.getInstruments() == null) {
-            musicians = musicianRepository.findAll();
+            musicians = musicianRepository.findAll()
+                    .stream()
+                    .filter(Musician::isProfileSet)
+                    .collect(Collectors.toList());
         } else {
             musicians = musicianRepository.findBy(request.getName(), request.getCity(), request.getInstruments());
         }

@@ -16,7 +16,8 @@ public interface MusicianRepository extends JpaRepository<Musician, Integer> {
     @Query("SELECT DISTINCT m FROM Musician m " +
             "JOIN m.instruments i " +
             "JOIN m.musicianContactInformation c " +
-            "WHERE c.name LIKE %?1% OR " +
+            "WHERE m.isProfileSet = true AND " +
+            " c.name LIKE %?1% OR " +
             "c.city LIKE %?2% OR " +
             "i.name IN ?3")
     List<Musician> findBy(String name, String city, List<String> instruments);
