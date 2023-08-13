@@ -32,7 +32,7 @@ public class MusicianController {
     }
 
     // TODO: Implement try-catch
-    @PutMapping(value = "/create-profile", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PutMapping(value = "/create-profile", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ProfileCreationDto> createProfile(@RequestPart("musician") ProfileCreationDto profileInfoDto,
                                                             @RequestPart(value = "profileImageFile", required = false)MultipartFile file) throws Exception {
         var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
