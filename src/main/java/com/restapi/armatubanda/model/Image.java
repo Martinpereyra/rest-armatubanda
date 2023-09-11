@@ -18,6 +18,6 @@ public class Image {
     private int id;
     private String name;
     private String type;
-    @Column(length = 50000)
+    @Column(columnDefinition = "LONGBLOB")
     private byte[] picByte;
 }
