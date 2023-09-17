@@ -14,7 +14,7 @@ public interface MusicianRepository extends JpaRepository<Musician, Integer> {
     Optional<Musician> findByEmail(String email);
 
     @Query("SELECT DISTINCT m FROM Musician m " +
-            "JOIN m.instruments i " +
+            "LEFT JOIN m.instruments i " +
             "JOIN m.musicianContactInformation c " +
             "WHERE m.isProfileSet = true AND " +
             " c.name LIKE %?1% OR " +
