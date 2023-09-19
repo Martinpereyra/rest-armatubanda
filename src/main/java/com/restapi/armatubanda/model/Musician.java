@@ -53,8 +53,13 @@ public class Musician implements UserDetails {
     private boolean isProfileSet;
 
     @OneToOne(cascade=CascadeType.ALL)
-    @JoinColumn(name = "musician_contact_information_id")
-    private MusicianContactInformation musicianContactInformation;
+    @JoinColumn(name = "personal_information_id")
+    private PersonalInformation personalInformation;
+
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "contact_information_id")
+    private ContactInformation contactInformation;
+
 
     @ElementCollection
     @CollectionTable(

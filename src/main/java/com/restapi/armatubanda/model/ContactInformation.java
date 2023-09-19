@@ -1,7 +1,10 @@
 package com.restapi.armatubanda.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,13 +12,13 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class MusicianContactInformation {
+public class ContactInformation {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO,generator = "userSequenceGenerator")
     @GenericGenerator(
@@ -29,21 +32,11 @@ public class MusicianContactInformation {
     )
     @JsonIgnore
     private int id;
-    private String name;
-    private String lastname;
-
-    private String stageName;
-
-    private String bio;
-    private String country;
-    private String city;
 
     private String phoneNumber;
 
     private String webSite;
 
-    private String socialMediaLink;
-
-
+    private String socialMedia;
 
 }

@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,20 +33,25 @@ public class MusicianService {
 
     public ResponseEntity<ProfileCreationDto> createProfile(
             Musician musicianToSave,
-            MusicianContactInformation contactInformation,
+            PersonalInformation personalInformation,
+            ContactInformation contactInformation,
             List<Instrument> instruments,
             Image image)
     {
-        var musicianContactInformation = MusicianContactInformation.builder()
-                .name(contactInformation.getName())
-                .lastname(contactInformation.getLastname())
-                .stageName(contactInformation.getStageName())
-                .bio(contactInformation.getBio())
-                .country(contactInformation.getCountry())
-                .city(contactInformation.getCity())
+        var musicianPersonalInformation = PersonalInformation.builder()
+                .name(personalInformation.getName())
+                .lastname(personalInformation.getLastname())
+                .stageName(personalInformation.getStageName())
+                .birthday(personalInformation.getBirthday())
+                .gender(personalInformation.getGender())
+                .country(personalInformation.getCountry())
+                .city(personalInformation.getCity())
+                .build();
+
+        var musicianContactInformation = ContactInformation.builder()
                 .phoneNumber(contactInformation.getPhoneNumber())
                 .webSite(contactInformation.getWebSite())
-                .socialMediaLink(contactInformation.getSocialMediaLink())
+                .socialMedia(contactInformation.getSocialMedia())
                 .build();
 
         List<Instrument> instrumentsToSave = new ArrayList<>();
@@ -55,11 +59,13 @@ public class MusicianService {
         for(Instrument instrument :instruments){
             instrumentsToSave.add(instrumentService.getInstrument(instrument.getName()).orElseThrow(()-> new UsernameNotFoundException("Instrument not found")));
         }
-        musicianToSave.setMusicianContactInformation(musicianContactInformation);
+        musicianToSave.setPersonalInformation(musicianPersonalInformation);
+        musicianToSave.setContactInformation(musicianContactInformation);
         musicianToSave.setInstruments(instrumentsToSave);
         musicianToSave.setProfileSet(true);
         ProfileCreationDto fullProfile = new ProfileCreationDto();
-        fullProfile.setMusicianContactInformation(musicianToSave.getMusicianContactInformation());
+        fullProfile.setPersonalInformation(musicianToSave.getPersonalInformation());
+        fullProfile.setContactInformation(musicianToSave.getContactInformation());
         fullProfile.setInstruments(musicianToSave.getInstruments());
         if(image != null) {
             musicianToSave.setImage(image);
@@ -122,7 +128,7 @@ public class MusicianService {
         musicians.forEach(musician -> {
             var responseMusician = MusicianResponseDto.builder()
                     .id(musician.getId())
-                    .musicianContactInformation(musician.getMusicianContactInformation())
+                    .personalInformation(musician.getPersonalInformation())
                     .instruments(musician.getInstruments())
                     .profileImage(musician.getImage())
                     .reviews(musician.getReviews())

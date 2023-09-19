@@ -37,24 +37,26 @@ public class MusicianController {
         String username = ((UserDetails) principal).getUsername();
         Musician musicianToSave = musicianService.getMusician(username).orElseThrow(()-> new UsernameNotFoundException("User not found"));
         if(!musicianToSave.isProfileSet()){
-        MusicianContactInformation contactInformation = profileInfoDto.getMusicianContactInformation();
+        PersonalInformation personalInformation = profileInfoDto.getPersonalInformation();
+        ContactInformation contactInformation = profileInfoDto.getContactInformation();
         List<Instrument> musicianInstrument = profileInfoDto.getInstruments();
         Image image = null;
         if(file != null) {
             image = musicianService.uploadProfileImage(file);
         }
-            return musicianService.createProfile(musicianToSave,contactInformation,musicianInstrument, image);
-        }else{
+        return musicianService.createProfile(musicianToSave,personalInformation,contactInformation,musicianInstrument, image);
+        }
+        else{
             throw new Exception("No se puede registrar");
         }
     }
 
     @GetMapping("/basicinfo")
-    public MusicianContactInformation getContactInformation(){
+    public PersonalInformation getPersonalInformation(){
         var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = ((UserDetails) principal).getUsername();
         Musician musician = musicianService.getMusician(username).orElseThrow(()->new UsernameNotFoundException("User not found"));
-        return musician.getMusicianContactInformation();
+        return musician.getPersonalInformation();
     }
 
     @PatchMapping(value = "/update-profile/image", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
