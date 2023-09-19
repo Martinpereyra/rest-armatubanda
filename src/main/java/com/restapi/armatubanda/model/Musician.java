@@ -61,6 +61,11 @@ public class Musician implements UserDetails {
     private ContactInformation contactInformation;
 
 
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "skills_id")
+    private SkillsInformation skillsInformation;
+
+
     @ElementCollection
     @CollectionTable(
             name="musician_instrument_table",
