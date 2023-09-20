@@ -4,12 +4,10 @@ import com.restapi.armatubanda.dto.MusicianRequestDto;
 import com.restapi.armatubanda.dto.MusicianResponseDto;
 import com.restapi.armatubanda.dto.ProfileCreationDto;
 import com.restapi.armatubanda.model.*;
-import com.restapi.armatubanda.repository.GenreRepository;
 import com.restapi.armatubanda.repository.MusicianRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -41,6 +39,7 @@ public class MusicianService {
             ContactInformation contactInformation,
             SkillsInformation skillsInformation,
             EducationInformation educationInformation,
+            CareerInformation careerInformation,
             List<Instrument> instruments,
             Image image)
     {
@@ -62,6 +61,10 @@ public class MusicianService {
 
         var musicianEducationInformation = EducationInformation.builder()
                 .educationHistory(educationInformation.getEducationHistory())
+                .build();
+
+        var musicianCareerInformation = CareerInformation.builder()
+                .careerHistory(careerInformation.getCareerHistory())
                 .build();
 
         List<InstrumentExperience> instrumentsList = skillsInformation.getInstrumentExperience();
@@ -99,6 +102,7 @@ public class MusicianService {
         musicianToSave.setContactInformation(musicianContactInformation);
         musicianToSave.setSkillsInformation(musicianSkillInformation);
         musicianToSave.setEducationInformation(musicianEducationInformation);
+        musicianToSave.setCareerInformation(musicianCareerInformation);
         musicianToSave.setInstruments(instrumentsToSave);
         musicianToSave.setProfileSet(true);
         ProfileCreationDto fullProfile = new ProfileCreationDto();
@@ -106,6 +110,7 @@ public class MusicianService {
         fullProfile.setContactInformation(musicianToSave.getContactInformation());
         fullProfile.setSkillsInformation(musicianToSave.getSkillsInformation());
         fullProfile.setEducationInformation(musicianToSave.getEducationInformation());
+        fullProfile.setCareerInformation(musicianToSave.getCareerInformation());
         fullProfile.setInstruments(musicianToSave.getInstruments());
         if(image != null) {
             musicianToSave.setImage(image);

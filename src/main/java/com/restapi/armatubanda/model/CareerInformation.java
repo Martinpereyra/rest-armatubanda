@@ -9,14 +9,15 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+
 import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class EducationInformation {
-
+public class CareerInformation {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO,generator = "userSequenceGenerator")
     @GenericGenerator(
@@ -32,5 +33,7 @@ public class EducationInformation {
     private int id;
 
     @OneToMany(cascade = CascadeType.ALL)
-    private List<History> educationHistory;
+    private List<History> careerHistory;
+
+
 }

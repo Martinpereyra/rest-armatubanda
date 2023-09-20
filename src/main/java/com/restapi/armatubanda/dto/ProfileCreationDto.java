@@ -23,6 +23,8 @@ public class ProfileCreationDto {
 
     private EducationInformation educationInformation;
 
+    private CareerInformation careerInformation;
+
     private List<Instrument> instruments;
 
     private Image profileImage;
