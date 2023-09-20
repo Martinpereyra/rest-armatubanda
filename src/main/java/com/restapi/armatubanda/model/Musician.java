@@ -77,6 +77,10 @@ public class Musician implements UserDetails {
     @JoinColumn(name="biography_id")
     private BiographyInformation biographyInformation;
 
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "preference_id")
+    private PreferenceInformation preferenceInformation;
+
 
     @ElementCollection
     @CollectionTable(

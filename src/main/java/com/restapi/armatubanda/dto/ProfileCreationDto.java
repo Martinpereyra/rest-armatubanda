@@ -27,6 +27,8 @@ public class ProfileCreationDto {
 
     private BiographyInformation biographyInformation;
 
+    private PreferenceInformation preferenceInformation;
+
     private List<Instrument> instruments;
 
     private Image profileImage;
