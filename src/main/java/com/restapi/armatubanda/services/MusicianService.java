@@ -40,6 +40,7 @@ public class MusicianService {
             PersonalInformation personalInformation,
             ContactInformation contactInformation,
             SkillsInformation skillsInformation,
+            EducationInformation educationInformation,
             List<Instrument> instruments,
             Image image)
     {
@@ -59,7 +60,9 @@ public class MusicianService {
                 .socialMedia(contactInformation.getSocialMedia())
                 .build();
 
-
+        var musicianEducationInformation = EducationInformation.builder()
+                .educationHistory(educationInformation.getEducationHistory())
+                .build();
 
         List<InstrumentExperience> instrumentsList = skillsInformation.getInstrumentExperience();
         List<InstrumentExperience> musicianInstrumentList = new ArrayList<>();
@@ -95,11 +98,14 @@ public class MusicianService {
         musicianToSave.setPersonalInformation(musicianPersonalInformation);
         musicianToSave.setContactInformation(musicianContactInformation);
         musicianToSave.setSkillsInformation(musicianSkillInformation);
+        musicianToSave.setEducationInformation(musicianEducationInformation);
         musicianToSave.setInstruments(instrumentsToSave);
         musicianToSave.setProfileSet(true);
         ProfileCreationDto fullProfile = new ProfileCreationDto();
         fullProfile.setPersonalInformation(musicianToSave.getPersonalInformation());
         fullProfile.setContactInformation(musicianToSave.getContactInformation());
+        fullProfile.setSkillsInformation(musicianToSave.getSkillsInformation());
+        fullProfile.setEducationInformation(musicianToSave.getEducationInformation());
         fullProfile.setInstruments(musicianToSave.getInstruments());
         if(image != null) {
             musicianToSave.setImage(image);

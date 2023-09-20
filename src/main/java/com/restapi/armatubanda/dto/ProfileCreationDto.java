@@ -21,6 +21,8 @@ public class ProfileCreationDto {
 
     private SkillsInformation skillsInformation;
 
+    private EducationInformation educationInformation;
+
     private List<Instrument> instruments;
 
     private Image profileImage;
