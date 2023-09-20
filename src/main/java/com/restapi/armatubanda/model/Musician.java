@@ -81,14 +81,6 @@ public class Musician implements UserDetails {
     @JoinColumn(name = "preference_id")
     private PreferenceInformation preferenceInformation;
 
-
-    @ElementCollection
-    @CollectionTable(
-            name="musician_instrument_table",
-            joinColumns = @JoinColumn(name = "musician_id")
-    )
-    private List<Instrument> instruments;
-
     @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
     @JoinColumn(name = "musician_image_id")
     private Image image;

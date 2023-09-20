@@ -18,8 +18,6 @@ import java.util.List;
 public class MusicianResponseDto {
     private int id;
     private PersonalInformation personalInformation;
-
-    private List<Instrument> instruments;
     private Image profileImage;
     private List<Review> reviews;
 }

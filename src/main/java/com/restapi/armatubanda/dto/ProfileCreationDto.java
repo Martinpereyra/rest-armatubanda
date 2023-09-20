@@ -29,8 +29,6 @@ public class ProfileCreationDto {
 
     private PreferenceInformation preferenceInformation;
 
-    private List<Instrument> instruments;
-
     private Image profileImage;
 
 }

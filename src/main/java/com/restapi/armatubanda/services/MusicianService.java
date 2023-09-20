@@ -42,7 +42,6 @@ public class MusicianService {
             CareerInformation careerInformation,
             BiographyInformation biographyInformation,
             PreferenceInformation preferenceInformation,
-            List<Instrument> instruments,
             Image image)
     {
         var musicianPersonalInformation = PersonalInformation.builder()
@@ -104,12 +103,6 @@ public class MusicianService {
                 .generalExperience(skillsInformation.getGeneralExperience())
                 .build();
 
-        List<Instrument> instrumentsToSave = new ArrayList<>();
-
-        for(Instrument instrument :instruments){
-            instrumentsToSave.add(instrumentService.getInstrument(instrument.getName()).orElseThrow(()-> new UsernameNotFoundException("Instrument not found")));
-        }
-
         musicianToSave.setPersonalInformation(musicianPersonalInformation);
         musicianToSave.setContactInformation(musicianContactInformation);
         musicianToSave.setSkillsInformation(musicianSkillInformation);
@@ -117,7 +110,6 @@ public class MusicianService {
         musicianToSave.setCareerInformation(musicianCareerInformation);
         musicianToSave.setBiographyInformation(musicianBiographyInformation);
         musicianToSave.setPreferenceInformation(musicianPreferenceInformation);
-        musicianToSave.setInstruments(instrumentsToSave);
         musicianToSave.setProfileSet(true);
         ProfileCreationDto fullProfile = new ProfileCreationDto();
         fullProfile.setPersonalInformation(musicianToSave.getPersonalInformation());
@@ -127,7 +119,6 @@ public class MusicianService {
         fullProfile.setCareerInformation(musicianToSave.getCareerInformation());
         fullProfile.setBiographyInformation(musicianToSave.getBiographyInformation());
         fullProfile.setPreferenceInformation(musicianToSave.getPreferenceInformation());
-        fullProfile.setInstruments(musicianToSave.getInstruments());
 
         if(image != null) {
             musicianToSave.setImage(image);
@@ -178,20 +169,19 @@ public class MusicianService {
 
     public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(MusicianRequestDto request) {
         List<Musician> musicians;
-        if (request.getName() == null && request.getCity() == null && request.getInstruments() == null) {
+        if (request.getName() == null && request.getCity() == null) {
             musicians = musicianRepository.findAll()
                     .stream()
                     .filter(Musician::isProfileSet)
                     .collect(Collectors.toList());
         } else {
-            musicians = musicianRepository.findBy(request.getName(), request.getCity(), request.getInstruments());
+            musicians = musicianRepository.findBy(request.getName(), request.getCity());
         }
         List<MusicianResponseDto> responseMusicians = new ArrayList<>();
         musicians.forEach(musician -> {
             var responseMusician = MusicianResponseDto.builder()
                     .id(musician.getId())
                     .personalInformation(musician.getPersonalInformation())
-                    .instruments(musician.getInstruments())
                     .profileImage(musician.getImage())
                     .reviews(musician.getReviews())
                     .build();
