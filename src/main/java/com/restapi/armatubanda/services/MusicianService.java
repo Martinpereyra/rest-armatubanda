@@ -40,6 +40,7 @@ public class MusicianService {
             SkillsInformation skillsInformation,
             EducationInformation educationInformation,
             CareerInformation careerInformation,
+            BiographyInformation biographyInformation,
             List<Instrument> instruments,
             Image image)
     {
@@ -65,6 +66,10 @@ public class MusicianService {
 
         var musicianCareerInformation = CareerInformation.builder()
                 .careerHistory(careerInformation.getCareerHistory())
+                .build();
+
+        var musicianBiographyInformation = BiographyInformation.builder()
+                .bio(biographyInformation.getBio())
                 .build();
 
         List<InstrumentExperience> instrumentsList = skillsInformation.getInstrumentExperience();
@@ -103,6 +108,7 @@ public class MusicianService {
         musicianToSave.setSkillsInformation(musicianSkillInformation);
         musicianToSave.setEducationInformation(musicianEducationInformation);
         musicianToSave.setCareerInformation(musicianCareerInformation);
+        musicianToSave.setBiographyInformation(musicianBiographyInformation);
         musicianToSave.setInstruments(instrumentsToSave);
         musicianToSave.setProfileSet(true);
         ProfileCreationDto fullProfile = new ProfileCreationDto();
@@ -111,7 +117,9 @@ public class MusicianService {
         fullProfile.setSkillsInformation(musicianToSave.getSkillsInformation());
         fullProfile.setEducationInformation(musicianToSave.getEducationInformation());
         fullProfile.setCareerInformation(musicianToSave.getCareerInformation());
+        fullProfile.setBiographyInformation(musicianToSave.getBiographyInformation());
         fullProfile.setInstruments(musicianToSave.getInstruments());
+
         if(image != null) {
             musicianToSave.setImage(image);
             fullProfile.setProfileImage(musicianToSave.getImage());

@@ -42,12 +42,13 @@ public class MusicianController {
         SkillsInformation skillsInformation = profileInfoDto.getSkillsInformation();
         EducationInformation educationInformation = profileInfoDto.getEducationInformation();
         CareerInformation careerInformation = profileInfoDto.getCareerInformation();
+        BiographyInformation biographyInformation = profileInfoDto.getBiographyInformation();
         List<Instrument> musicianInstrument = profileInfoDto.getInstruments();
         Image image = null;
         if(file != null) {
             image = musicianService.uploadProfileImage(file);
         }
-        return musicianService.createProfile(musicianToSave,personalInformation,contactInformation,skillsInformation,educationInformation,careerInformation,musicianInstrument, image);
+        return musicianService.createProfile(musicianToSave,personalInformation,contactInformation,skillsInformation,educationInformation,careerInformation,biographyInformation,musicianInstrument, image);
         }
         else{
             throw new Exception("No se puede registrar");

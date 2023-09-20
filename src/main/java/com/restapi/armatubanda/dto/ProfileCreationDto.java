@@ -25,10 +25,10 @@ public class ProfileCreationDto {
 
     private CareerInformation careerInformation;
 
+    private BiographyInformation biographyInformation;
+
     private List<Instrument> instruments;
 
     private Image profileImage;
-
-
 
 }
