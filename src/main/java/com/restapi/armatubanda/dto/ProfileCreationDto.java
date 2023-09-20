@@ -1,10 +1,7 @@
 package com.restapi.armatubanda.dto;
 
 
-import com.restapi.armatubanda.model.ContactInformation;
-import com.restapi.armatubanda.model.Image;
-import com.restapi.armatubanda.model.Instrument;
-import com.restapi.armatubanda.model.PersonalInformation;
+import com.restapi.armatubanda.model.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +18,8 @@ public class ProfileCreationDto {
     private PersonalInformation personalInformation;
 
     private ContactInformation contactInformation;
+
+    private SkillsInformation skillsInformation;
 
     private List<Instrument> instruments;
 

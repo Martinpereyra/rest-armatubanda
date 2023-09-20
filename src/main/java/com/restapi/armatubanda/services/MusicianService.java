@@ -4,10 +4,12 @@ import com.restapi.armatubanda.dto.MusicianRequestDto;
 import com.restapi.armatubanda.dto.MusicianResponseDto;
 import com.restapi.armatubanda.dto.ProfileCreationDto;
 import com.restapi.armatubanda.model.*;
+import com.restapi.armatubanda.repository.GenreRepository;
 import com.restapi.armatubanda.repository.MusicianRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,8 @@ public class MusicianService {
 
     private final InstrumentService instrumentService;
 
+    private final GenreService genreService;
+
     public Optional<Musician> getMusician(String username){
         return musicianRepository.findByEmail(username);
     }
@@ -35,6 +39,7 @@ public class MusicianService {
             Musician musicianToSave,
             PersonalInformation personalInformation,
             ContactInformation contactInformation,
+            SkillsInformation skillsInformation,
             List<Instrument> instruments,
             Image image)
     {
@@ -54,13 +59,42 @@ public class MusicianService {
                 .socialMedia(contactInformation.getSocialMedia())
                 .build();
 
+
+
+        List<InstrumentExperience> instrumentsList = skillsInformation.getInstrumentExperience();
+        List<InstrumentExperience> musicianInstrumentList = new ArrayList<>();
+
+        for (InstrumentExperience instrumentElement: instrumentsList) {
+
+           Instrument musicianInstrument = instrumentService.getInstrument(instrumentElement.getInstrument().getName()).orElseThrow(()->new UsernameNotFoundException("Instrument not found"));
+           InstrumentExperience musicianInstrumentExperience = new InstrumentExperience();
+           musicianInstrumentExperience.setInstrument(musicianInstrument);
+           musicianInstrumentExperience.setExperience(instrumentElement.getExperience());
+           musicianInstrumentList.add(musicianInstrumentExperience);
+        }
+
+        List<Genre> genreList = skillsInformation.getGenres();
+        List<Genre> musicianGenreList = new ArrayList<>();
+
+        for(Genre genreElement : genreList){
+            musicianGenreList.add(genreService.getGenre(genreElement.getName()).orElseThrow(()-> new UsernameNotFoundException("Genre not found")));
+        }
+
+        var musicianSkillInformation = SkillsInformation.builder()
+                .instrumentExperience(musicianInstrumentList)
+                .genres(musicianGenreList)
+                .generalExperience(skillsInformation.getGeneralExperience())
+                .build();
+
         List<Instrument> instrumentsToSave = new ArrayList<>();
 
         for(Instrument instrument :instruments){
             instrumentsToSave.add(instrumentService.getInstrument(instrument.getName()).orElseThrow(()-> new UsernameNotFoundException("Instrument not found")));
         }
+
         musicianToSave.setPersonalInformation(musicianPersonalInformation);
         musicianToSave.setContactInformation(musicianContactInformation);
+        musicianToSave.setSkillsInformation(musicianSkillInformation);
         musicianToSave.setInstruments(instrumentsToSave);
         musicianToSave.setProfileSet(true);
         ProfileCreationDto fullProfile = new ProfileCreationDto();
