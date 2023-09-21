@@ -178,10 +178,16 @@ public class MusicianService {
             musicians = musicianRepository.findBy(request.getName(), request.getCity());
         }
         List<MusicianResponseDto> responseMusicians = new ArrayList<>();
+        // TODO: Agregar al builder el campo skillInformation (tira error)
         musicians.forEach(musician -> {
             var responseMusician = MusicianResponseDto.builder()
                     .id(musician.getId())
                     .personalInformation(musician.getPersonalInformation())
+                    .contactInformation(musician.getContactInformation())
+                    .educationInformation(musician.getEducationInformation())
+                    .careerInformation(musician.getCareerInformation())
+                    .biographyInformation(musician.getBiographyInformation())
+                    .preferenceInformation(musician.getPreferenceInformation())
                     .profileImage(musician.getImage())
                     .reviews(musician.getReviews())
                     .build();
