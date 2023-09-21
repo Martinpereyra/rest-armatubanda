@@ -53,15 +53,33 @@ public class Musician implements UserDetails {
     private boolean isProfileSet;
 
     @OneToOne(cascade=CascadeType.ALL)
-    @JoinColumn(name = "musician_contact_information_id")
-    private MusicianContactInformation musicianContactInformation;
+    @JoinColumn(name = "personal_information_id")
+    private PersonalInformation personalInformation;
 
-    @ElementCollection
-    @CollectionTable(
-            name="musician_instrument_table",
-            joinColumns = @JoinColumn(name = "musician_id")
-    )
-    private List<Instrument> instruments;
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "contact_information_id")
+    private ContactInformation contactInformation;
+
+
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "skills_id")
+    private SkillsInformation skillsInformation;
+
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "education_id")
+    private EducationInformation educationInformation;
+
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "career_id")
+    private CareerInformation careerInformation;
+
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name="biography_id")
+    private BiographyInformation biographyInformation;
+
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "preference_id")
+    private PreferenceInformation preferenceInformation;
 
     @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
     @JoinColumn(name = "musician_image_id")

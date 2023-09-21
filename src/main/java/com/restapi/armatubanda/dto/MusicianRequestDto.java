@@ -14,5 +14,5 @@ import java.util.List;
 public class MusicianRequestDto {
     private String name;
     private String city;
-    private List<String> instruments;
+
 }

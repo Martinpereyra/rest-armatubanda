@@ -15,7 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,6 +26,8 @@ public class MusicianService {
 
     private final InstrumentService instrumentService;
 
+    private final GenreService genreService;
+
     public Optional<Musician> getMusician(String username){
         return musicianRepository.findByEmail(username);
     }
@@ -34,33 +35,91 @@ public class MusicianService {
 
     public ResponseEntity<ProfileCreationDto> createProfile(
             Musician musicianToSave,
-            MusicianContactInformation contactInformation,
-            List<Instrument> instruments,
+            PersonalInformation personalInformation,
+            ContactInformation contactInformation,
+            SkillsInformation skillsInformation,
+            EducationInformation educationInformation,
+            CareerInformation careerInformation,
+            BiographyInformation biographyInformation,
+            PreferenceInformation preferenceInformation,
             Image image)
     {
-        var musicianContactInformation = MusicianContactInformation.builder()
-                .name(contactInformation.getName())
-                .lastname(contactInformation.getLastname())
-                .stageName(contactInformation.getStageName())
-                .bio(contactInformation.getBio())
-                .country(contactInformation.getCountry())
-                .city(contactInformation.getCity())
-                .phoneNumber(contactInformation.getPhoneNumber())
-                .webSite(contactInformation.getWebSite())
-                .socialMediaLink(contactInformation.getSocialMediaLink())
+        var musicianPersonalInformation = PersonalInformation.builder()
+                .name(personalInformation.getName())
+                .lastname(personalInformation.getLastname())
+                .stageName(personalInformation.getStageName())
+                .birthday(personalInformation.getBirthday())
+                .gender(personalInformation.getGender())
+                .country(personalInformation.getCountry())
+                .city(personalInformation.getCity())
                 .build();
 
-        List<Instrument> instrumentsToSave = new ArrayList<>();
+        var musicianContactInformation = ContactInformation.builder()
+                .phoneNumber(contactInformation.getPhoneNumber())
+                .webSite(contactInformation.getWebSite())
+                .socialMedia(contactInformation.getSocialMedia())
+                .build();
 
-        for(Instrument instrument :instruments){
-            instrumentsToSave.add(instrumentService.getInstrument(instrument.getName()).orElseThrow(()-> new UsernameNotFoundException("Instrument not found")));
+        var musicianEducationInformation = EducationInformation.builder()
+                .educationHistory(educationInformation.getEducationHistory())
+                .build();
+
+        var musicianCareerInformation = CareerInformation.builder()
+                .careerHistory(careerInformation.getCareerHistory())
+                .build();
+
+        var musicianBiographyInformation = BiographyInformation.builder()
+                .bio(biographyInformation.getBio())
+                .build();
+
+        var musicianPreferenceInformation = PreferenceInformation.builder()
+                .lookingBands(preferenceInformation.isLookingBands())
+                .lookingMusician(preferenceInformation.isLookingMusician())
+                .available(preferenceInformation.isAvailable())
+                .build();
+
+        List<InstrumentExperience> instrumentsList = skillsInformation.getInstrumentExperience();
+        List<InstrumentExperience> musicianInstrumentList = new ArrayList<>();
+
+        for (InstrumentExperience instrumentElement: instrumentsList) {
+
+           Instrument musicianInstrument = instrumentService.getInstrument(instrumentElement.getInstrument().getName()).orElseThrow(()->new UsernameNotFoundException("Instrument not found"));
+           InstrumentExperience musicianInstrumentExperience = new InstrumentExperience();
+           musicianInstrumentExperience.setInstrument(musicianInstrument);
+           musicianInstrumentExperience.setExperience(instrumentElement.getExperience());
+           musicianInstrumentList.add(musicianInstrumentExperience);
         }
-        musicianToSave.setMusicianContactInformation(musicianContactInformation);
-        musicianToSave.setInstruments(instrumentsToSave);
+
+        List<Genre> genreList = skillsInformation.getGenres();
+        List<Genre> musicianGenreList = new ArrayList<>();
+
+        for(Genre genreElement : genreList){
+            musicianGenreList.add(genreService.getGenre(genreElement.getName()).orElseThrow(()-> new UsernameNotFoundException("Genre not found")));
+        }
+
+        var musicianSkillInformation = SkillsInformation.builder()
+                .instrumentExperience(musicianInstrumentList)
+                .genres(musicianGenreList)
+                .generalExperience(skillsInformation.getGeneralExperience())
+                .build();
+
+        musicianToSave.setPersonalInformation(musicianPersonalInformation);
+        musicianToSave.setContactInformation(musicianContactInformation);
+        musicianToSave.setSkillsInformation(musicianSkillInformation);
+        musicianToSave.setEducationInformation(musicianEducationInformation);
+        musicianToSave.setCareerInformation(musicianCareerInformation);
+        musicianToSave.setBiographyInformation(musicianBiographyInformation);
+        musicianToSave.setPreferenceInformation(musicianPreferenceInformation);
         musicianToSave.setProfileSet(true);
         ProfileCreationDto fullProfile = new ProfileCreationDto();
-        fullProfile.setMusicianContactInformation(musicianToSave.getMusicianContactInformation());
-        fullProfile.setInstruments(musicianToSave.getInstruments());
+        fullProfile.setPersonalInformation(musicianToSave.getPersonalInformation());
+        fullProfile.setContactInformation(musicianToSave.getContactInformation());
+        fullProfile.setSkillsInformation(musicianToSave.getSkillsInformation());
+        fullProfile.setEducationInformation(musicianToSave.getEducationInformation());
+        fullProfile.setCareerInformation(musicianToSave.getCareerInformation());
+        fullProfile.setBiographyInformation(musicianToSave.getBiographyInformation());
+        fullProfile.setPreferenceInformation(musicianToSave.getPreferenceInformation());
+
         if(image != null) {
             musicianToSave.setImage(image);
             fullProfile.setProfileImage(musicianToSave.getImage());
@@ -110,20 +169,25 @@ public class MusicianService {
 
     public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(MusicianRequestDto request) {
         List<Musician> musicians;
-        if (request.getName() == null && request.getCity() == null && request.getInstruments() == null) {
+        if (request.getName() == null && request.getCity() == null) {
             musicians = musicianRepository.findAll()
                     .stream()
                     .filter(Musician::isProfileSet)
                     .collect(Collectors.toList());
         } else {
-            musicians = musicianRepository.findBy(request.getName(), request.getCity(), request.getInstruments());
+            musicians = musicianRepository.findBy(request.getName(), request.getCity());
         }
         List<MusicianResponseDto> responseMusicians = new ArrayList<>();
+        // TODO: Agregar al builder el campo skillInformation (tira error)
         musicians.forEach(musician -> {
             var responseMusician = MusicianResponseDto.builder()
                     .id(musician.getId())
-                    .musicianContactInformation(musician.getMusicianContactInformation())
-                    .instruments(musician.getInstruments())
+                    .personalInformation(musician.getPersonalInformation())
+                    .contactInformation(musician.getContactInformation())
+                    .educationInformation(musician.getEducationInformation())
+                    .careerInformation(musician.getCareerInformation())
+                    .biographyInformation(musician.getBiographyInformation())
+                    .preferenceInformation(musician.getPreferenceInformation())
                     .profileImage(musician.getImage())
                     .reviews(musician.getReviews())
                     .build();

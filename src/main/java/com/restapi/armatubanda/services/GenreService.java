@@ -42,4 +42,6 @@ public class GenreService {
             return "El género con ID " + id + " no existe";
         }
     }
+
+    public Optional<Genre> getGenre(String name){return genreRepository.findGenreByName(name);}
 }

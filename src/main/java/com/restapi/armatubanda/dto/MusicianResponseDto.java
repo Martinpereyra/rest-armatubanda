@@ -1,9 +1,6 @@
 package com.restapi.armatubanda.dto;
 
-import com.restapi.armatubanda.model.Image;
-import com.restapi.armatubanda.model.Instrument;
-import com.restapi.armatubanda.model.MusicianContactInformation;
-import com.restapi.armatubanda.model.Review;
+import com.restapi.armatubanda.model.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,9 +14,13 @@ import java.util.List;
 @AllArgsConstructor
 public class MusicianResponseDto {
     private int id;
-    private MusicianContactInformation musicianContactInformation;
-
-    private List<Instrument> instruments;
+    private PersonalInformation personalInformation;
+    private ContactInformation contactInformation;
+    private SkillsInformation skillsInformation;
+    private EducationInformation educationInformation;
+    private CareerInformation careerInformation;
+    private BiographyInformation biographyInformation;
+    private PreferenceInformation preferenceInformation;
     private Image profileImage;
     private List<Review> reviews;
 }
