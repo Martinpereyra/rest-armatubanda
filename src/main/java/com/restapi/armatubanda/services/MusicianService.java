@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -167,9 +168,9 @@ public class MusicianService {
         return ResponseEntity.ok(reviews);
     }
 
-    public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(MusicianRequestDto request) {
+    public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(@RequestParam(required = false) MusicianRequestDto request) {
         List<Musician> musicians;
-        if (request.getName() == null && request.getCity() == null) {
+        if (request == null) {
             musicians = musicianRepository.findAll()
                     .stream()
                     .filter(Musician::isProfileSet)
