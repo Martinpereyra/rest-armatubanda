@@ -31,7 +31,7 @@ public class InstrumentExperience {
     @JsonIgnore
     private int id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "instrument_id")
     private Instrument instrument;
 

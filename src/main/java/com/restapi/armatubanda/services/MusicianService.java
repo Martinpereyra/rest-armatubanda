@@ -185,6 +185,7 @@ public class MusicianService {
                     .id(musician.getId())
                     .personalInformation(musician.getPersonalInformation())
                     .contactInformation(musician.getContactInformation())
+                    .skillsInformation(musician.getSkillsInformation())
                     .educationInformation(musician.getEducationInformation())
                     .careerInformation(musician.getCareerInformation())
                     .biographyInformation(musician.getBiographyInformation())

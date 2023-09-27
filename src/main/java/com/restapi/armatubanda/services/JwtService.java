@@ -57,7 +57,7 @@ public class JwtService {
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis())) // seteo la fecha de creacion
-                .setExpiration(new Date(System.currentTimeMillis()+ 1000 * 60 * 24)) // seteo la fecha de expiracion
+                .setExpiration(new Date(System.currentTimeMillis()+ 100000 * 60 * 24)) // seteo la fecha de expiracion
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256) // firmo el token
                 .compact(); // metodo que genera el token
 
