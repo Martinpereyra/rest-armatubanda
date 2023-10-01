@@ -5,7 +5,9 @@ import com.restapi.armatubanda.dto.MusicianResponseDto;
 import com.restapi.armatubanda.dto.ProfileCreationDto;
 import com.restapi.armatubanda.model.*;
 import com.restapi.armatubanda.services.MusicianService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -74,8 +76,16 @@ public class MusicianController {
         return musicianService.uploadMusicianReview(review);
     }
 
-
-
-
+    @GetMapping("/{id}")
+    public ResponseEntity<MusicianResponseDto> GetMusician(@PathVariable int id) {
+        try {
+            MusicianResponseDto musician = musicianService.getById(id);
+            return ResponseEntity.ok(musician);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
 }
