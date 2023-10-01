@@ -82,6 +82,7 @@ public class MusicianController {
             MusicianResponseDto musician = musicianService.getById(id);
             return ResponseEntity.ok(musician);
         } catch (EntityNotFoundException e) {
+            // TODO: Return error message (Implement exceptions handling)
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
