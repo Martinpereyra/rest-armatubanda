@@ -1,5 +1,6 @@
 package com.restapi.armatubanda.model;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,15 +10,13 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import java.util.List;
-
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class SkillsInformation {
+public class Invitation {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO,generator = "userSequenceGenerator")
     @GenericGenerator(
@@ -29,20 +28,14 @@ public class SkillsInformation {
                     @Parameter(name = "increment_size", value = "1")
             }
     )
-    @JsonIgnore
+    @Column(name = "invitation_id")
     private int id;
 
 
+    @ManyToOne(cascade=CascadeType.ALL)
+    private Musician musicianInvited;
 
-    @OneToMany(cascade=CascadeType.ALL)
-    private List<InstrumentExperience> instrumentExperience;
-
-
-    @ManyToMany
-    private List<Genre> genres;
-
-    @Enumerated(EnumType.STRING)
-    private Experience generalExperience;
-
+    @ManyToOne(cascade=CascadeType.ALL)
+    private Band bandInvitation;
 
 }

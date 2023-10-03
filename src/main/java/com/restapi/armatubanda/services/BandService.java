@@ -73,4 +73,7 @@ public class BandService {
                 .build();
     }
 
+    public Band getBandById(int bandId) {
+        return this.bandRepository.findById(bandId).orElseThrow(() -> new UsernameNotFoundException("Band not found"));
+    }
 }
