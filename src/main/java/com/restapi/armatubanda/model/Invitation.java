@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @Data
 @Builder
@@ -32,10 +33,12 @@ public class Invitation {
     private int id;
 
 
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne
     private Musician musicianInvited;
 
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne
     private Band bandInvitation;
+
+    private boolean status;
 
 }

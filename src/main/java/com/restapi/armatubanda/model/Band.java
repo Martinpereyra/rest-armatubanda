@@ -44,11 +44,7 @@ public class Band {
     @ManyToOne(fetch = FetchType.EAGER)
     private Musician musicianLeader;
 
-    @ElementCollection
-    @CollectionTable(
-            name="band_genres",
-            joinColumns = @JoinColumn(name = "band_id")
-    )
+    @ManyToMany
     private List<Genre> genres;
 
     @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)

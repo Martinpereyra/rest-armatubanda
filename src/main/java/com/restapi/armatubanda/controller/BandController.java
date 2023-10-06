@@ -41,27 +41,7 @@ public class BandController {
 
     }
 
-    @PostMapping(value="/invite")
-    public Invitation inviteMusician(@RequestBody InvitationRequestDto invitationRequestDto){
-        var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
-        Musician musicianLeader = musicianService.getMusician(username).orElseThrow(()-> new UsernameNotFoundException("User not found"));
-        if(invitationRequestDto.getMusicianId() != musicianLeader.getId()){
-            Band band = bandService.getBandById(invitationRequestDto.getBandId());
-            if (musicianLeader.getId() == band.getMusicianLeader().getId()){
-                Musician musicianInvited = this.musicianService.getMusicianById(invitationRequestDto.getMusicianId()).orElseThrow(()->new UsernameNotFoundException("Musician not found"));
-                var newInvitation = Invitation.builder()
-                        .bandInvitation(band)
-                        .musicianInvited(musicianInvited)
-                        .build();
-                return invitationService.createInvitation(newInvitation);
-            }else{
-                return null;
-            }
-        }else{
-            return null;
-        }
-    }
+
     @GetMapping(value = "/{bandId}")
     public BandCreationDto getBand(@PathVariable int bandId){
         Band band = this.bandService.getBandById(bandId);

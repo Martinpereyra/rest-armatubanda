@@ -76,4 +76,8 @@ public class BandService {
     public Band getBandById(int bandId) {
         return this.bandRepository.findById(bandId).orElseThrow(() -> new UsernameNotFoundException("Band not found"));
     }
+
+    public void save(Band band){
+        this.bandRepository.save(band);
+    }
 }
