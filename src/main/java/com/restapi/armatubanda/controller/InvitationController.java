@@ -62,13 +62,22 @@ public class InvitationController {
         }
     }
 
-    @GetMapping(value="/musician")
-    public List<Invitation> getMusicianInvitations(){
+    @GetMapping(value="/musician/pending")
+    public List<Invitation> getMusicianPendingInvitations(){
         var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = ((UserDetails) principal).getUsername();
         Musician musician = musicianService.getMusician(username).orElseThrow(()->new UsernameNotFoundException("User not found"));
 
-        return this.invitationService.getMusicianInvitations(musician.getId());
+        return this.invitationService.getMusicianPendingInvitations(musician.getId());
+    }
+
+    @GetMapping(value="/musician/accepted")
+    public List<Invitation> getMusicianAcceptedInvitations(){
+        var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = ((UserDetails) principal).getUsername();
+        Musician musician = musicianService.getMusician(username).orElseThrow(()->new UsernameNotFoundException("User not found"));
+
+        return this.invitationService.getMusicianAcceptedInvitations(musician.getId());
     }
 
 }

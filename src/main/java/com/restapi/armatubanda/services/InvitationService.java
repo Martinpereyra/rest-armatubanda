@@ -43,37 +43,46 @@ public class InvitationService {
                 bandMembers.add(musicianToSave);
                 bandToSave.setMembers(bandMembers);
                 this.bandService.save(bandToSave);
-            }else {
-                throw new Exception();
-            }
-            Invitation invitationTemp = this.invitationRepository.save(invitationTosave);
-            var invitationReturned = InvitationStatusDto.builder()
-                    .invitationId(invitationTemp.getId())
-                    .musicianId(invitationTemp.getMusicianInvited().getId())
-                    .bandId(invitationTemp.getBandInvitation().getId())
-                    .status(invitationStatusDto.isStatus())
-                    .build();
+                Invitation invitationTemp = this.invitationRepository.save(invitationTosave);
+                var invitationReturned = InvitationStatusDto.builder()
+                        .invitationId(invitationTemp.getId())
+                        .musicianId(invitationTemp.getMusicianInvited().getId())
+                        .bandId(invitationTemp.getBandInvitation().getId())
+                        .status(invitationStatusDto.isStatus())
+                        .build();
 
-            return ResponseEntity.ok(invitationReturned);
+                return ResponseEntity.ok(invitationReturned);
+            }else{
+                return ResponseEntity.ok(null);
+            }
         }
         else{
 
             Invitation invitationToDelete = this.invitationRepository.findById(invitationStatusDto.getInvitationId()).orElseThrow(()-> new UsernameNotFoundException("Invitation not found"));
-            Band bandToSave = this.bandService.getBandById(invitationToDelete.getBandInvitation().getId());
-            List<Musician> bandMembers = bandToSave.getMembers();
-            Musician musicianToDelete = this.musicianService.getMusicianById(invitationToDelete.getMusicianInvited().getId()).orElseThrow(()-> new UsernameNotFoundException("Musician not found"));
-            bandMembers.remove(musicianToDelete);
-            bandToSave.setMembers(bandMembers);
-            this.bandService.save(bandToSave);
+            if (invitationToDelete.isStatus()){
+                Band bandToSave = this.bandService.getBandById(invitationToDelete.getBandInvitation().getId());
+                List<Musician> bandMembers = bandToSave.getMembers();
+                Musician musicianToDelete = this.musicianService.getMusicianById(invitationToDelete.getMusicianInvited().getId()).orElseThrow(()-> new UsernameNotFoundException("Musician not found"));
+                bandMembers.remove(musicianToDelete);
+                bandToSave.setMembers(bandMembers);
+                this.bandService.save(bandToSave);
+            }
             this.invitationRepository.delete(invitationToDelete);
             return ResponseEntity.ok(null);
         }
     }
 
-    public List<Invitation> getMusicianInvitations(int musicianId) {
+    public List<Invitation> getMusicianPendingInvitations(int musicianId) {
         return this.invitationRepository.findAll()
                 .stream()
-                .filter(m->m.getMusicianInvited().getId() == musicianId)
+                .filter(m->m.getMusicianInvited().getId() == musicianId && !m.isStatus())
+                .collect(Collectors.toList());
+    }
+
+    public List<Invitation> getMusicianAcceptedInvitations(int musicianId) {
+        return this.invitationRepository.findAll()
+                .stream()
+                .filter(m->m.getMusicianInvited().getId() == musicianId && m.isStatus())
                 .collect(Collectors.toList());
     }
 }
