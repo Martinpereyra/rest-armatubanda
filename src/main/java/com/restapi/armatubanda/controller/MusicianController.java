@@ -27,7 +27,7 @@ public class MusicianController {
     private final MusicianService musicianService;
 
     @GetMapping(value = "/all")
-    public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(@RequestBody(required = false) MusicianRequestDto request) {
+    public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(@ModelAttribute MusicianRequestDto request) {
         return musicianService.getMusiciansList(request);
     }
 

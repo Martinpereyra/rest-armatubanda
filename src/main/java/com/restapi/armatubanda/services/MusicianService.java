@@ -169,9 +169,9 @@ public class MusicianService {
         return ResponseEntity.ok(reviews);
     }
 
-    public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(@RequestParam(required = false) MusicianRequestDto request) {
+    public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(MusicianRequestDto request) {
         List<Musician> musicians;
-        if (request == null) {
+        if (request.getName() == null && request.getCity() == null) {
             musicians = musicianRepository.findAll()
                     .stream()
                     .filter(Musician::isProfileSet)
