@@ -55,4 +55,24 @@ public class BandController {
                 .build();
     }
 
+    @DeleteMapping(value = "/delete/{bandId}")
+    public HttpStatus deleteBand(@PathVariable int bandId){
+        var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = ((UserDetails) principal).getUsername();
+        Musician bandLeader = musicianService.getMusician(username).orElseThrow(()-> new UsernameNotFoundException("User not found"));
+
+        Band bandToDelete = this.bandService.getBandById(bandId);
+
+        if(bandToDelete.getMusicianLeader().getId() == bandLeader.getId()){
+            this.invitationService.deleteAllBandInvitations(bandToDelete.getId());
+            this.bandService.deleteBand(bandToDelete);
+            return HttpStatus.OK;
+        }else {
+            return HttpStatus.BAD_REQUEST;
+        }
+
+
+
+    }
+
 }

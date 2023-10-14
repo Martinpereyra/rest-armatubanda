@@ -51,7 +51,7 @@ public class Band {
     @JoinColumn(name = "band_image_id")
     private Image image;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany
     private List<Musician> members;
 
 

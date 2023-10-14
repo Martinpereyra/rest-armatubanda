@@ -34,9 +34,11 @@ public class Invitation {
 
 
     @ManyToOne
+    @JoinColumn(name = "musician_id")
     private Musician musicianInvited;
 
     @ManyToOne
+    @JoinColumn(name = "band_id")
     private Band bandInvitation;
 
     private boolean status;

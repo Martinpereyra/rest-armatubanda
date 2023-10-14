@@ -80,4 +80,8 @@ public class BandService {
     public void save(Band band){
         this.bandRepository.save(band);
     }
+
+    public void deleteBand(Band bandToDelete) {
+        this.bandRepository.delete(bandToDelete);
+    }
 }

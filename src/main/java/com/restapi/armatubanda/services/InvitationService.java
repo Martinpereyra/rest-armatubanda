@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -84,5 +85,10 @@ public class InvitationService {
                 .stream()
                 .filter(m->m.getMusicianInvited().getId() == musicianId && m.isStatus())
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void deleteAllBandInvitations(int id) {
+        this.invitationRepository.deleteAllByBandId(id);
     }
 }
