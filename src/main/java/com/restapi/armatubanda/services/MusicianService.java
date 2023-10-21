@@ -34,6 +34,10 @@ public class MusicianService {
         return musicianRepository.findByEmail(username);
     }
 
+    public Optional<Musician> getMusicianById(int id){
+        return musicianRepository.findById(id);
+    }
+
 
     public ResponseEntity<ProfileCreationDto> createProfile(
             Musician musicianToSave,
