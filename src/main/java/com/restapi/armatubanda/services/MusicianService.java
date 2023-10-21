@@ -5,6 +5,7 @@ import com.restapi.armatubanda.dto.MusicianResponseDto;
 import com.restapi.armatubanda.dto.ProfileCreationDto;
 import com.restapi.armatubanda.model.*;
 import com.restapi.armatubanda.repository.MusicianRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -172,9 +173,9 @@ public class MusicianService {
         return ResponseEntity.ok(reviews);
     }
 
-    public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(@RequestParam(required = false) MusicianRequestDto request) {
+    public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(MusicianRequestDto request) {
         List<Musician> musicians;
-        if (request == null) {
+        if (request.getName() == null && request.getCity() == null) {
             musicians = musicianRepository.findAll()
                     .stream()
                     .filter(Musician::isProfileSet)
@@ -183,22 +184,30 @@ public class MusicianService {
             musicians = musicianRepository.findBy(request.getName(), request.getCity());
         }
         List<MusicianResponseDto> responseMusicians = new ArrayList<>();
-        // TODO: Agregar al builder el campo skillInformation (tira error)
         musicians.forEach(musician -> {
-            var responseMusician = MusicianResponseDto.builder()
-                    .id(musician.getId())
-                    .personalInformation(musician.getPersonalInformation())
-                    .contactInformation(musician.getContactInformation())
-                    .skillsInformation(musician.getSkillsInformation())
-                    .educationInformation(musician.getEducationInformation())
-                    .careerInformation(musician.getCareerInformation())
-                    .biographyInformation(musician.getBiographyInformation())
-                    .preferenceInformation(musician.getPreferenceInformation())
-                    .profileImage(musician.getImage())
-                    .reviews(musician.getReviews())
-                    .build();
-            responseMusicians.add(responseMusician);
+            responseMusicians.add(createMusicianResponseDto(musician));
         });
         return ResponseEntity.ok(responseMusicians);
+    }
+
+    public MusicianResponseDto getById(int id) {
+        var musician = musicianRepository.findById(id).orElseThrow(() ->
+                new EntityNotFoundException("Musician not found with ID: " + id));;
+        return createMusicianResponseDto(musician);
+    }
+
+    private MusicianResponseDto createMusicianResponseDto(Musician musician) {
+        return MusicianResponseDto.builder()
+                .id(musician.getId())
+                .personalInformation(musician.getPersonalInformation())
+                .contactInformation(musician.getContactInformation())
+                .skillsInformation(musician.getSkillsInformation())
+                .educationInformation(musician.getEducationInformation())
+                .careerInformation(musician.getCareerInformation())
+                .biographyInformation(musician.getBiographyInformation())
+                .preferenceInformation(musician.getPreferenceInformation())
+                .profileImage(musician.getImage())
+                .reviews(musician.getReviews())
+                .build();
     }
 }
