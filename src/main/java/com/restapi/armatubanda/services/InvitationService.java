@@ -91,4 +91,9 @@ public class InvitationService {
     public void deleteAllBandInvitations(int id) {
         this.invitationRepository.deleteAllByBandId(id);
     }
+
+    @Transactional
+    public void deleteInvitation(int bandId,int musicianId){
+        this.invitationRepository.deleteByBandIdAndMusicianId(bandId,musicianId);
+    }
 }
