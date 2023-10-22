@@ -74,6 +74,9 @@ public class AuthenticationService {
         UserInfoDto userInfoDto = UserInfoDto.builder()
                 .user(username)
                 .isProfileSet(musician.booleanToString())
+                .firstName(musician.getPersonalInformation().getName())
+                .lastName(musician.getPersonalInformation().getLastname())
+                .profileImage(musician.getImage())
                 .build();
 
         return ResponseEntity.ok(userInfoDto);
