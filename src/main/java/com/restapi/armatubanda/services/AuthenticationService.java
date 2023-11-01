@@ -72,6 +72,7 @@ public class AuthenticationService {
         String username = ((UserDetails) principal).getUsername();
         var musician = musicianRepository.findByEmail(username).orElseThrow();
         UserInfoDto userInfoDto = UserInfoDto.builder()
+                .id(musician.getId())
                 .user(username)
                 .isProfileSet(musician.booleanToString())
                 .firstName(musician.getPersonalInformation().getName())

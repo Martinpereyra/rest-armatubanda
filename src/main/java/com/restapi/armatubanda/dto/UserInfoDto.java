@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserInfoDto {
+    private int id;
     private String user;
     private String isProfileSet;
     private String firstName;
