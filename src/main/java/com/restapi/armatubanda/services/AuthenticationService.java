@@ -6,21 +6,20 @@ import com.restapi.armatubanda.auth.RegisterRequest;
 import com.restapi.armatubanda.dto.UserInfoDto;
 import com.restapi.armatubanda.exception.GenericException;
 import com.restapi.armatubanda.exception.InvalidCredentialsException;
+import com.restapi.armatubanda.exception.ResourceNotFoundException;
 import com.restapi.armatubanda.model.Role;
 import com.restapi.armatubanda.repository.MusicianRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.restapi.armatubanda.model.Musician;
-import org.springframework.web.ErrorResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +36,11 @@ public class AuthenticationService {
                 .role(Role.USER)
                 .isProfileSet(false)
                 .build();
-        musicianRepository.save(musician);
+        try {
+            musicianRepository.save(musician);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException("El email " + request.getEmail() + " ya fue usado.");
+        }
         var jwtToken = jwtService.generateToken(musician);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
@@ -73,23 +76,27 @@ public class AuthenticationService {
                 .build();
     }
 
-    public ResponseEntity<UserInfoDto> getUserLogged() {
-        var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal == null){
-            return null;
+    public UserInfoDto getUserLogged() {
+        try {
+            var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (principal instanceof UserDetails) {
+                String username = ((UserDetails) principal).getUsername();
+                var musician = musicianRepository.findByEmail(username)
+                        .orElseThrow(null);
+
+                return UserInfoDto.builder()
+                        .id(musician.getId())
+                        .user(username)
+                        .isProfileSet(musician.booleanToString())
+                        .firstName(musician.getPersonalInformation().getName())
+                        .lastName(musician.getPersonalInformation().getLastname())
+                        .profileImage(musician.getImage())
+                        .build();
+            }
+        } catch (Exception e) {
+            throw new GenericException("Hubo un error. Por favor inténtalo de nuevo más tarde.");
         }
-        String username = ((UserDetails) principal).getUsername();
-        var musician = musicianRepository.findByEmail(username).orElseThrow();
-        UserInfoDto userInfoDto = UserInfoDto.builder()
-                .id(musician.getId())
-                .user(username)
-                .isProfileSet(musician.booleanToString())
-                .firstName(musician.getPersonalInformation().getName())
-                .lastName(musician.getPersonalInformation().getLastname())
-                .profileImage(musician.getImage())
-                .build();
-
-        return ResponseEntity.ok(userInfoDto);
-
+        throw new ResourceNotFoundException("Usuario no encontrado.");
     }
+
 }

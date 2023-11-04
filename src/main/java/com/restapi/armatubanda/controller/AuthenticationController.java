@@ -33,7 +33,7 @@ public class AuthenticationController {
 
     @GetMapping("/me")
     public ResponseEntity<UserInfoDto> getUserLogged(){
-        return service.getUserLogged();
+        return ResponseEntity.ok(service.getUserLogged());
     }
 
 }
