@@ -4,12 +4,15 @@ import com.restapi.armatubanda.auth.AuthenticationRequest;
 import com.restapi.armatubanda.auth.AuthenticationResponse;
 import com.restapi.armatubanda.auth.RegisterRequest;
 import com.restapi.armatubanda.dto.UserInfoDto;
+import com.restapi.armatubanda.exception.GenericException;
+import com.restapi.armatubanda.exception.InvalidCredentialsException;
 import com.restapi.armatubanda.model.Role;
 import com.restapi.armatubanda.repository.MusicianRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,14 +26,9 @@ import org.springframework.web.ErrorResponse;
 @RequiredArgsConstructor
 public class AuthenticationService {
     private final MusicianRepository musicianRepository;
-
     private final PasswordEncoder passwordEncoder;
-
     private final JwtService jwtService;
-
     private final AuthenticationManager authenticationManager;
-
-    private final UserDetailsService userDetailsService;
 
     public AuthenticationResponse register(RegisterRequest request) {
         var musician = Musician.builder()
@@ -48,19 +46,30 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
+            );
+        } catch (AuthenticationException e) {
+            throw new InvalidCredentialsException("Usuario y/o contraseña incorrectos.");
+        } catch (Exception e) {
+            throw new GenericException("Hubo un error. Por favor inténtalo de nuevo más tarde.");
+        }
+
         // Si llego hasta aca el usuario es correcto, caso contrario el metodo authenticate del manager tira una exception
         var musician = musicianRepository.findByEmail(request.getEmail()).orElseThrow();
         var jwtToken = jwtService.generateToken(musician);
         return AuthenticationResponse.builder()
+                .id(musician.getId())
                 .token(jwtToken)
                 .email(musician.getEmail())
                 .isProfileSet(musician.booleanToString())
+                .firstName(musician.getPersonalInformation().getName())
+                .lastName(musician.getPersonalInformation().getLastname())
+                .profileImage(musician.getImage())
                 .build();
     }
 

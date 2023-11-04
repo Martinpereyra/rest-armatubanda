@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 public class AuthenticationController {
-
     private final AuthenticationService service;
 
     @PostMapping("/register")
@@ -36,6 +35,5 @@ public class AuthenticationController {
     public ResponseEntity<UserInfoDto> getUserLogged(){
         return service.getUserLogged();
     }
-
 
 }
