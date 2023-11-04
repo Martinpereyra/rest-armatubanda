@@ -1,5 +1,6 @@
 package com.restapi.armatubanda.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -35,6 +36,16 @@ public class ExceptionHandlerController {
     public ErrorMessage globalExceptionHandler(Exception ex, WebRequest request) {
         return new ErrorMessage(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(value = HttpStatus.CONFLICT)
+    public ErrorMessage globalExceptionHandler(DataIntegrityViolationException ex, WebRequest request) {
+        return new ErrorMessage(
+                HttpStatus.CONFLICT.value(),
                 new Date(),
                 ex.getMessage(),
                 request.getDescription(false));
