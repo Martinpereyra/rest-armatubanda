@@ -166,6 +166,9 @@ public class MusicianService {
                 .comment(review.getComment())
                 .musicianId(review.getMusicianId())
                 .reviewerId(review.getReviewerId())
+                .reviewerFirstName(reviewer.getPersonalInformation().getName())
+                .reviewerLastName(reviewer.getPersonalInformation().getLastname())
+                .reviewerProfileImage(reviewer.getImage())
                 .build();
         reviews.add(newReview);
         musician.setReviews(reviews);
