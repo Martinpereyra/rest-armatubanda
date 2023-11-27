@@ -1,8 +1,6 @@
 package com.restapi.armatubanda.services;
 
-import com.restapi.armatubanda.dto.MusicianRequestDto;
-import com.restapi.armatubanda.dto.MusicianResponseDto;
-import com.restapi.armatubanda.dto.ProfileCreationDto;
+import com.restapi.armatubanda.dto.*;
 import com.restapi.armatubanda.model.*;
 import com.restapi.armatubanda.repository.MusicianRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -212,5 +210,35 @@ public class MusicianService {
                 .profileImage(musician.getImage())
                 .reviews(musician.getReviews())
                 .build();
+    }
+
+    public ResponseEntity<MusicianProfileResponseDto> getMusicianProfile(int id) {
+
+        Musician musicianToFind = musicianRepository.findById(id).orElseThrow(()-> new UsernameNotFoundException("Musician not found with ID: " + id));
+
+        var musicianProfile = MusicianProfileResponseDto.builder()
+                .firstName(musicianToFind.getPersonalInformation().getName())
+                .lastName(musicianToFind.getPersonalInformation().getLastname())
+                .stageName(musicianToFind.getPersonalInformation().getStageName())
+                .biography(musicianToFind.getBiographyInformation().getBio())
+                .contactInformation(musicianToFind.getContactInformation())
+                .reviews(musicianToFind.getReviews())
+                .image(musicianToFind.getImage())
+                .build();
+
+        return ResponseEntity.ok(musicianProfile);
+
+    }
+
+    public ResponseEntity<MusicianInformationResponseDto> getMusicianInformation(int id) {
+        Musician musicianToFind = musicianRepository.findById(id).orElseThrow(()-> new UsernameNotFoundException("Musician not found with ID: " + id));
+
+        var musicianInformation = MusicianInformationResponseDto.builder()
+                .careerInformation(musicianToFind.getCareerInformation())
+                .educationInformation(musicianToFind.getEducationInformation())
+                .preferenceInformation(musicianToFind.getPreferenceInformation())
+                .skillsInformation(musicianToFind.getSkillsInformation())
+                .build();
+        return ResponseEntity.ok(musicianInformation);
     }
 }

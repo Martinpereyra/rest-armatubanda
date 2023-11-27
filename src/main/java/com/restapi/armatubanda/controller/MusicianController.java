@@ -1,8 +1,6 @@
 package com.restapi.armatubanda.controller;
 
-import com.restapi.armatubanda.dto.MusicianRequestDto;
-import com.restapi.armatubanda.dto.MusicianResponseDto;
-import com.restapi.armatubanda.dto.ProfileCreationDto;
+import com.restapi.armatubanda.dto.*;
 import com.restapi.armatubanda.model.*;
 import com.restapi.armatubanda.services.MusicianService;
 import jakarta.persistence.EntityNotFoundException;
@@ -77,7 +75,7 @@ public class MusicianController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MusicianResponseDto> GetMusician(@PathVariable int id) {
+    public ResponseEntity<MusicianResponseDto> getMusician(@PathVariable int id) {
         try {
             MusicianResponseDto musician = musicianService.getById(id);
             return ResponseEntity.ok(musician);
@@ -88,5 +86,14 @@ public class MusicianController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @GetMapping("/get-profile/{id}")
+    public ResponseEntity<MusicianProfileResponseDto> getMusicianProfile(@PathVariable int id){
+        return musicianService.getMusicianProfile(id);
+    }
+
+    @GetMapping("/get-profile/information/{id}")
+    public ResponseEntity<MusicianInformationResponseDto> getMusicianInformation(@PathVariable int id){
+        return musicianService.getMusicianInformation(id);}
 
 }
