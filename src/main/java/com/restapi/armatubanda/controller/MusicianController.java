@@ -24,6 +24,8 @@ public class MusicianController {
 
     private final MusicianService musicianService;
 
+    private final AuthenticationController authenticationController;
+
     @GetMapping()
     public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(@ModelAttribute MusicianRequestDto request) {
         return musicianService.getMusiciansList(request);
@@ -95,5 +97,25 @@ public class MusicianController {
     @GetMapping("/get-profile/information/{id}")
     public ResponseEntity<MusicianInformationResponseDto> getMusicianInformation(@PathVariable int id){
         return musicianService.getMusicianInformation(id);}
+
+
+    @PostMapping(value = "/create-post", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<Post> createPost(@RequestPart("post") PostDto postDto,
+                                           @RequestPart(value = "postImage", required = false)MultipartFile file) throws Exception{
+        Image image = null;
+        if(file != null) {
+            image = musicianService.uploadProfileImage(file);
+        }
+        UserInfoDto user = authenticationController.getUserLogged().getBody();
+        assert user != null;
+        return musicianService.createPost(postDto,image,user.getId());
+    }
+
+    @GetMapping(value = "/get-post/{id}")
+    public ResponseEntity<List<PostDto>> getPosts(@PathVariable int id){
+        return musicianService.getPosts(id);
+    }
+
+
 
 }
