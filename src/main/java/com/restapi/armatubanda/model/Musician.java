@@ -88,6 +88,9 @@ public class Musician implements UserDetails {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Review> reviews;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Post> posts;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));

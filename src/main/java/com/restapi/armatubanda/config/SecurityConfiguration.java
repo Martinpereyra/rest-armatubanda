@@ -33,6 +33,7 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests((requests)->requests
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/musician/get-profile/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -1,8 +1,6 @@
 package com.restapi.armatubanda.services;
 
-import com.restapi.armatubanda.dto.MusicianRequestDto;
-import com.restapi.armatubanda.dto.MusicianResponseDto;
-import com.restapi.armatubanda.dto.ProfileCreationDto;
+import com.restapi.armatubanda.dto.*;
 import com.restapi.armatubanda.model.*;
 import com.restapi.armatubanda.repository.MusicianRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,7 +10,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -195,7 +192,7 @@ public class MusicianService {
 
     public MusicianResponseDto getById(int id) {
         var musician = musicianRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("Musician not found with ID: " + id));;
+                new EntityNotFoundException("Musician not found with ID: " + id));
         return createMusicianResponseDto(musician);
     }
 
@@ -212,5 +209,81 @@ public class MusicianService {
                 .profileImage(musician.getImage())
                 .reviews(musician.getReviews())
                 .build();
+    }
+
+    public ResponseEntity<MusicianProfileResponseDto> getMusicianProfile(int id) {
+
+        Musician musicianToFind = musicianRepository.findById(id).orElseThrow(()-> new UsernameNotFoundException("Musician not found with ID: " + id));
+
+        var musicianProfile = MusicianProfileResponseDto.builder()
+                .firstName(musicianToFind.getPersonalInformation().getName())
+                .lastName(musicianToFind.getPersonalInformation().getLastname())
+                .stageName(musicianToFind.getPersonalInformation().getStageName())
+                .biography(musicianToFind.getBiographyInformation().getBio())
+                .contactInformation(musicianToFind.getContactInformation())
+                .reviews(musicianToFind.getReviews())
+                .image(musicianToFind.getImage())
+                .build();
+
+        return ResponseEntity.ok(musicianProfile);
+
+    }
+
+    public ResponseEntity<MusicianInformationResponseDto> getMusicianInformation(int id) {
+        Musician musicianToFind = musicianRepository.findById(id).orElseThrow(()-> new UsernameNotFoundException("Musician not found with ID: " + id));
+
+        var musicianInformation = MusicianInformationResponseDto.builder()
+                .careerInformation(musicianToFind.getCareerInformation())
+                .educationInformation(musicianToFind.getEducationInformation())
+                .preferenceInformation(musicianToFind.getPreferenceInformation())
+                .skillsInformation(musicianToFind.getSkillsInformation())
+                .build();
+        return ResponseEntity.ok(musicianInformation);
+    }
+
+    public ResponseEntity<Post> createPost(PostDto postDto, Image imagenPost, int userId) {
+        Musician musician = musicianRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException("Musician not found with ID: " + userId));
+
+        List<Post> postList = musician.getPosts();
+
+        Post newPost;
+        if(postDto.isUrlPost()){
+            newPost = Post.builder()
+                    .videoUrl(postDto.getUrlVideo())
+                    .urlPost(postDto.isUrlPost())
+                    .build();
+        }
+        else{
+            newPost = Post.builder()
+                    .imagen(imagenPost)
+                    .urlPost(postDto.isUrlPost())
+                    .build();
+
+        }
+        postList.add(newPost);
+
+        musician.setPosts(postList);
+        musicianRepository.save(musician);
+
+        return ResponseEntity.ok(newPost);
+    }
+
+    public ResponseEntity<List<PostDto>> getPosts(int id) {
+        Musician musician = musicianRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found with id: "+id));
+        List<Post> listPost = musician.getPosts();
+
+        List<PostDto> returnPostList = new ArrayList<>();
+        if(!listPost.isEmpty()){
+        for(Post post : listPost){
+            var postDto = PostDto.builder()
+                    .urlVideo(post.getVideoUrl())
+                    .image(post.getImagen())
+                    .build();
+            returnPostList.add(postDto);
+        }
+        return ResponseEntity.ok(returnPostList);
+        } else{
+           return ResponseEntity.ok(null);
+        }
     }
 }
