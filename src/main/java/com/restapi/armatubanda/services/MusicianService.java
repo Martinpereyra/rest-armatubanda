@@ -176,8 +176,12 @@ public class MusicianService {
     public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(MusicianRequestDto request) {
         List<Musician> musicians;
         List<String> genreList = new ArrayList<>();
+        List<String> instrumentList = new ArrayList<>();
         if (request.genres != null){
-            genreList = request.genres;
+            genreList = request.getGenres();
+        }
+        if (request.instruments != null){
+            instrumentList = request.getInstruments();
         }
         if (request.getName() == null && request.getCity() == null && (genreList.isEmpty())){
             musicians = musicianRepository.findAll()
@@ -185,7 +189,7 @@ public class MusicianService {
                     .filter(Musician::isProfileSet)
                     .collect(Collectors.toList());
         } else {
-            musicians = musicianRepository.findBy(request.getName(), request.getCity(),request.getGenres());
+            musicians = musicianRepository.findBy(request.getName(), request.getCity(),request.getGenres(),request.getInstruments());
         }
         List<MusicianResponseDto> responseMusicians = new ArrayList<>();
         musicians.forEach(musician -> {

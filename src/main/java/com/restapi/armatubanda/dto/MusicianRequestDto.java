@@ -16,5 +16,6 @@ public class MusicianRequestDto {
     public String name;
     public String city;
     public List<String> genres;
+    public List<String> instruments;
 
 }
