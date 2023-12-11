@@ -65,13 +65,19 @@ public class AuthenticationService {
         // Si llego hasta aca el usuario es correcto, caso contrario el metodo authenticate del manager tira una exception
         var musician = musicianRepository.findByEmail(request.getEmail()).orElseThrow();
         var jwtToken = jwtService.generateToken(musician);
+        var firstName = "";
+        var lastName = "";
+        if (musician.getPersonalInformation() != null) {
+            firstName = musician.getPersonalInformation().getName();
+            lastName = musician.getPersonalInformation().getLastname();
+        }
         return AuthenticationResponse.builder()
                 .id(musician.getId())
                 .token(jwtToken)
                 .email(musician.getEmail())
-                .isProfileSet(musician.booleanToString())
-                .firstName(musician.getPersonalInformation().getName())
-                .lastName(musician.getPersonalInformation().getLastname())
+                .isProfileSet(musician.isProfileSet())
+                .firstName(firstName)
+                .lastName(lastName)
                 .profileImage(musician.getImage())
                 .build();
     }
@@ -84,12 +90,18 @@ public class AuthenticationService {
                 var musician = musicianRepository.findByEmail(username)
                         .orElseThrow(null);
 
+                var firstName = "";
+                var lastName = "";
+                if (musician.getPersonalInformation() != null) {
+                    firstName = musician.getPersonalInformation().getName();
+                    lastName = musician.getPersonalInformation().getLastname();
+                }
                 return UserInfoDto.builder()
                         .id(musician.getId())
                         .user(username)
-                        .isProfileSet(musician.booleanToString())
-                        .firstName(musician.getPersonalInformation().getName())
-                        .lastName(musician.getPersonalInformation().getLastname())
+                        .isProfileSet(musician.isProfileSet())
+                        .firstName(firstName)
+                        .lastName(lastName)
                         .profileImage(musician.getImage())
                         .build();
             }

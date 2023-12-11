@@ -125,11 +125,4 @@ public class Musician implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
-    public String booleanToString(){
-        return this.isProfileSet ? "true" : "false";
-    }
-
-
-
 }
