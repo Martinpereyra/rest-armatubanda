@@ -36,7 +36,7 @@ public class MusicianService {
     }
 
 
-    public ResponseEntity<ProfileCreationDto> createProfile(
+    public ResponseEntity<Musician> createProfile(
             Musician musicianToSave,
             PersonalInformation personalInformation,
             ContactInformation contactInformation,
@@ -114,21 +114,12 @@ public class MusicianService {
         musicianToSave.setBiographyInformation(musicianBiographyInformation);
         musicianToSave.setPreferenceInformation(musicianPreferenceInformation);
         musicianToSave.setProfileSet(true);
-        ProfileCreationDto fullProfile = new ProfileCreationDto();
-        fullProfile.setPersonalInformation(musicianToSave.getPersonalInformation());
-        fullProfile.setContactInformation(musicianToSave.getContactInformation());
-        fullProfile.setSkillsInformation(musicianToSave.getSkillsInformation());
-        fullProfile.setEducationInformation(musicianToSave.getEducationInformation());
-        fullProfile.setCareerInformation(musicianToSave.getCareerInformation());
-        fullProfile.setBiographyInformation(musicianToSave.getBiographyInformation());
-        fullProfile.setPreferenceInformation(musicianToSave.getPreferenceInformation());
 
         if(image != null) {
             musicianToSave.setImage(image);
-            fullProfile.setProfileImage(musicianToSave.getImage());
         }
         musicianRepository.save(musicianToSave);
-        return ResponseEntity.ok(fullProfile);
+        return ResponseEntity.ok(musicianToSave);
     }
 
     public Image uploadProfileImage(MultipartFile file) throws IOException {

@@ -32,9 +32,9 @@ public class MusicianController {
     }
 
     // TODO: Implement try-catch
-    @PutMapping(value = "/create-profile", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ProfileCreationDto> createProfile(@RequestPart("musician") ProfileCreationDto profileInfoDto,
-                                                            @RequestPart(value = "profileImageFile", required = false)MultipartFile file) throws Exception {
+    @PutMapping(value = "/create-profile", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<Musician> createProfile(@RequestPart(value = "profileInfoDto") ProfileCreationDto profileInfoDto,
+                                                  @RequestPart(value = "profileImage", required = false)MultipartFile file) throws Exception {
         var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = ((UserDetails) principal).getUsername();
         Musician musicianToSave = musicianService.getMusician(username).orElseThrow(()-> new UsernameNotFoundException("User not found"));
