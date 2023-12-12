@@ -232,28 +232,22 @@ public class MusicianService {
         return ResponseEntity.ok(musicianInformation);
     }
 
-    public ResponseEntity<Post> createPost(PostDto postDto, Image imagenPost, int userId) {
-        Musician musician = musicianRepository.findById(userId).orElseThrow(()-> new UsernameNotFoundException("Musician not found with ID: " + userId));
+    public ResponseEntity<Post> createPost(String videoUrl, MultipartFile file, int userId) throws IOException {
+        Musician musician = musicianRepository.findById(userId).orElseThrow(()->
+                new UsernameNotFoundException("Musician not found with ID: " + userId));
 
-        List<Post> postList = musician.getPosts();
-
-        Post newPost;
-        if(postDto.isUrlPost()){
-            newPost = Post.builder()
-                    .videoUrl(postDto.getUrlVideo())
-                    .urlPost(postDto.isUrlPost())
-                    .build();
+        Image image = null;
+        if(file != null) {
+            image = uploadProfileImage(file);
         }
-        else{
-            newPost = Post.builder()
-                    .imagen(imagenPost)
-                    .urlPost(postDto.isUrlPost())
-                    .build();
 
-        }
-        postList.add(newPost);
-
-        musician.setPosts(postList);
+        List<Post> posts = musician.getPosts();
+        Post newPost = Post.builder()
+                .videoUrl(videoUrl)
+                .image(image)
+                .build();
+        posts.add(newPost);
+        musician.setPosts(posts);
         musicianRepository.save(musician);
 
         return ResponseEntity.ok(newPost);
@@ -262,19 +256,16 @@ public class MusicianService {
     public ResponseEntity<List<PostDto>> getPosts(int id) {
         Musician musician = musicianRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found with id: "+id));
         List<Post> listPost = musician.getPosts();
+        List<PostDto> posts = new ArrayList<>();
 
-        List<PostDto> returnPostList = new ArrayList<>();
-        if(!listPost.isEmpty()){
         for(Post post : listPost){
             var postDto = PostDto.builder()
+                    .Id(post.getId())
                     .urlVideo(post.getVideoUrl())
-                    .image(post.getImagen())
+                    .image(post.getImage())
                     .build();
-            returnPostList.add(postDto);
+            posts.add(postDto);
         }
-        return ResponseEntity.ok(returnPostList);
-        } else{
-           return ResponseEntity.ok(null);
-        }
+        return ResponseEntity.ok(posts);
     }
 }

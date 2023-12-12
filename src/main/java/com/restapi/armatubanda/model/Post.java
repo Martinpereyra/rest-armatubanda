@@ -28,13 +28,9 @@ public class Post {
     )
     @Column(name = "post_id")
     private int id;
-
     private String videoUrl;
-
     @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
     @JoinColumn(name = "musician_image_id")
-    private Image imagen;
-
-    private boolean urlPost;
+    private Image image;
 
 }

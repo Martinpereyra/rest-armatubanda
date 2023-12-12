@@ -99,16 +99,12 @@ public class MusicianController {
         return musicianService.getMusicianInformation(id);}
 
 
-    @PostMapping(value = "/create-post", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<Post> createPost(@RequestPart("post") PostDto postDto,
-                                           @RequestPart(value = "postImage", required = false)MultipartFile file) throws Exception{
-        Image image = null;
-        if(file != null) {
-            image = musicianService.uploadProfileImage(file);
-        }
+    @PostMapping(value = "/create-post", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<Post> createPost(@RequestPart(value= "videoUrl", required = false) String videoUrl,
+                                           @RequestPart(value = "image", required = false) MultipartFile file) throws Exception{
         UserInfoDto user = authenticationController.getUserLogged().getBody();
         assert user != null;
-        return musicianService.createPost(postDto,image,user.getId());
+        return musicianService.createPost(videoUrl, file, user.getId());
     }
 
     @GetMapping(value = "/get-post/{id}")

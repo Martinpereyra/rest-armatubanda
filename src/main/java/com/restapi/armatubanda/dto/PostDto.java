@@ -11,8 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostDto {
-    public boolean urlPost;
-    public String urlVideo;
-    public Image image;
-
+    private int Id;
+    private String urlVideo;
+    private Image image;
 }
