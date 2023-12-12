@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -263,9 +264,12 @@ public class MusicianService {
                     .Id(post.getId())
                     .urlVideo(post.getVideoUrl())
                     .image(post.getImage())
+                    .createdOn(post.getCreatedOn())
                     .build();
             posts.add(postDto);
         }
+        posts.sort(Comparator.comparing(PostDto::getCreatedOn).reversed());
+
         return ResponseEntity.ok(posts);
     }
 }
