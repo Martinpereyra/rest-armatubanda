@@ -1,6 +1,8 @@
 package com.restapi.armatubanda.dto;
 
+import com.restapi.armatubanda.model.Experience;
 import com.restapi.armatubanda.model.Genre;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,5 +19,6 @@ public class MusicianRequestDto {
     public String city;
     public List<String> genres;
     public List<String> instruments;
+    public String experience;
 
 }

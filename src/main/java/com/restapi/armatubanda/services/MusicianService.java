@@ -183,13 +183,18 @@ public class MusicianService {
         if (request.instruments != null){
             instrumentList = request.getInstruments();
         }
-        if (request.getName() == null && request.getCity() == null && (genreList.isEmpty())){
+        Experience exp = null;
+        if (request.getExperience() != null){
+            exp = Experience.valueOf(request.getExperience());
+        }
+        System.out.println(exp);
+        if (request.getName() == null && request.getCity() == null && (genreList.isEmpty()) && (instrumentList.isEmpty())){
             musicians = musicianRepository.findAll()
                     .stream()
                     .filter(Musician::isProfileSet)
                     .collect(Collectors.toList());
         } else {
-            musicians = musicianRepository.findBy(request.getName(), request.getCity(),request.getGenres(),request.getInstruments());
+            musicians = musicianRepository.findBy(request.getName(), request.getCity(),request.getGenres(),request.getInstruments(),exp);
         }
         List<MusicianResponseDto> responseMusicians = new ArrayList<>();
         musicians.forEach(musician -> {
