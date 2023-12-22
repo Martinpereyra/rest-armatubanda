@@ -15,7 +15,7 @@ public class AuthenticationResponse {
     private int id;
     private String token;
     private String email;
-    private String isProfileSet;
+    private boolean isProfileSet;
     private String firstName;
     private String lastName;
     private Image profileImage;

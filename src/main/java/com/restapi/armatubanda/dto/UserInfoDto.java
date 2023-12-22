@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class UserInfoDto {
     private int id;
     private String user;
-    private String isProfileSet;
+    private boolean isProfileSet;
     private String firstName;
     private String lastName;
     private Image profileImage;

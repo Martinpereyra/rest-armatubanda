@@ -5,8 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
+import java.time.Instant;
 
 @Data
 @Builder
@@ -28,13 +31,10 @@ public class Post {
     )
     @Column(name = "post_id")
     private int id;
-
     private String videoUrl;
-
     @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
     @JoinColumn(name = "musician_image_id")
-    private Image imagen;
-
-    private boolean urlPost;
-
+    private Image image;
+    @CreationTimestamp
+    private Instant createdOn;
 }

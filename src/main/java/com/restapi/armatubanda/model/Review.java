@@ -36,6 +36,6 @@ public class Review {
     private int reviewerId;
     private String reviewerFirstName;
     private String reviewerLastName;
-    @OneToOne
+    @ManyToOne
     private Image reviewerProfileImage;
 }

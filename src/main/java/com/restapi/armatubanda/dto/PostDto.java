@@ -6,13 +6,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostDto {
-    public boolean urlPost;
-    public String urlVideo;
-    public Image image;
-
+    private int Id;
+    private String urlVideo;
+    private Image image;
+    private Instant createdOn;
 }
