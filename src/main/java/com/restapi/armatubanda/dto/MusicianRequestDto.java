@@ -20,5 +20,6 @@ public class MusicianRequestDto {
     public List<String> genres;
     public List<String> instruments;
     public String experience;
+    public Boolean lookingBand;
 
 }
