@@ -1,5 +1,8 @@
 package com.restapi.armatubanda.dto;
 
+import com.restapi.armatubanda.model.Experience;
+import com.restapi.armatubanda.model.Genre;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +15,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MusicianRequestDto {
-    private String name;
-    private String city;
+    public String name;
+    public String city;
+    public String country;
+    public List<String> genres;
+    public List<String> instruments;
+    public String experience;
+    public Boolean lookingBand;
 
 }

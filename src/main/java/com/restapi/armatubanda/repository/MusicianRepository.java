@@ -1,8 +1,11 @@
 package com.restapi.armatubanda.repository;
 
+import com.restapi.armatubanda.model.Experience;
+import com.restapi.armatubanda.model.Genre;
 import com.restapi.armatubanda.model.Musician;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,11 +15,4 @@ import java.util.Optional;
 public interface MusicianRepository extends JpaRepository<Musician, Integer> {
 
     Optional<Musician> findByEmail(String email);
-
-    @Query("SELECT DISTINCT m FROM Musician m " +
-            "JOIN m.personalInformation c " +
-            "WHERE m.isProfileSet = true AND " +
-            " c.name LIKE %?1% OR " +
-            "c.city LIKE %?2%")
-    List<Musician> findBy(String name, String city);
 }

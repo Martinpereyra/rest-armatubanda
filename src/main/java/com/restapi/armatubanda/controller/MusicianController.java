@@ -26,8 +26,8 @@ public class MusicianController {
 
     private final AuthenticationController authenticationController;
 
-    @GetMapping()
-    public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(@ModelAttribute MusicianRequestDto request) {
+    @GetMapping(value = "/find")
+    public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(@RequestBody MusicianRequestDto request) {
         return musicianService.getMusiciansList(request);
     }
 
