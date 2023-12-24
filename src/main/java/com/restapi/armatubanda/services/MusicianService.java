@@ -34,6 +34,7 @@ public class MusicianService {
 
     private final EntityManager entityManager;
 
+
     public Optional<Musician> getMusician(String username){
         return musicianRepository.findByEmail(username);
     }
@@ -304,5 +305,128 @@ public class MusicianService {
         posts.sort(Comparator.comparing(PostDto::getCreatedOn).reversed());
 
         return ResponseEntity.ok(posts);
+    }
+
+    public MusicianResponseDto createProfileAlt(Musician musicianToSave,ProfileCreationDto profileInfoDto, MultipartFile file) throws IOException {
+
+        if (musicianToSave.isProfileSet()) {
+            throw new IllegalStateException("Profile already set");
+        }
+
+        Image image = null;
+        if (file != null && !file.isEmpty()) {
+            image = uploadProfileImage(file);
+        }
+
+        return createMusicianProfile(musicianToSave, profileInfoDto, image);
+
+    }
+
+    private MusicianResponseDto createMusicianProfile(Musician musicianToSave, ProfileCreationDto profileInfoDto, Image image) {
+        updatePersonalInformation(musicianToSave, profileInfoDto.getPersonalInformation());
+
+        updateContactInformation(musicianToSave, profileInfoDto.getContactInformation());
+
+        updateSkillsInformation(musicianToSave, profileInfoDto.getSkillsInformation());
+
+        updateEducationInformation(musicianToSave, profileInfoDto.getEducationInformation());
+
+        updateCareerInformation(musicianToSave, profileInfoDto.getCareerInformation());
+
+        updateBiographyInformation(musicianToSave, profileInfoDto.getBiographyInformation());
+
+        updatePreferenceInformation(musicianToSave, profileInfoDto.getPreferenceInformation());
+
+        if (image != null) {
+            musicianToSave.setImage(image);
+        }
+
+        musicianToSave.setProfileSet(true);
+
+        Musician updatedMusician = musicianRepository.save(musicianToSave);
+
+        return convertToMusicianResponseDto(updatedMusician);
+    }
+
+    private MusicianResponseDto convertToMusicianResponseDto(Musician musician) {
+        MusicianResponseDto dto = new MusicianResponseDto();
+        dto.setPersonalInformation(musician.getPersonalInformation());
+        dto.setContactInformation(musician.getContactInformation());
+        dto.setSkillsInformation(musician.getSkillsInformation());
+        dto.setEducationInformation(musician.getEducationInformation());
+        dto.setCareerInformation(musician.getCareerInformation());
+        dto.setBiographyInformation(musician.getBiographyInformation());
+        dto.setPreferenceInformation(musician.getPreferenceInformation());
+        dto.setProfileImage(musician.getImage());
+        dto.setReviews(musician.getReviews());
+
+        return dto;
+    }
+
+    private void updatePreferenceInformation(Musician musicianToSave, PreferenceInformation preferenceInformation) {
+        if(preferenceInformation != null){
+            musicianToSave.setPreferenceInformation(preferenceInformation);
+        }
+    }
+
+    private void updateBiographyInformation(Musician musicianToSave, BiographyInformation biographyInformation) {
+        if(biographyInformation != null){
+            musicianToSave.setBiographyInformation(biographyInformation);
+        }
+    }
+
+    private void updateCareerInformation(Musician musicianToSave, CareerInformation careerInformation) {
+        if(careerInformation != null){
+            musicianToSave.setCareerInformation(careerInformation);
+        }
+    }
+
+    private void updateEducationInformation(Musician musicianToSave, EducationInformation educationInformation) {
+        if(educationInformation != null) {
+            musicianToSave.setEducationInformation(educationInformation);
+        }
+        
+    }
+
+    private void updateSkillsInformation(Musician musicianToSave, SkillsInformation skillsInformation) {
+        if(skillsInformation != null){
+            skillsInformation.setInstrumentExperience(updateInstrumentExperience(skillsInformation.getInstrumentExperience()));
+            skillsInformation.setGenres(updateGenres(skillsInformation.getGenres()));
+            musicianToSave.setSkillsInformation(skillsInformation);
+        }
+    }
+
+    private void updateContactInformation(Musician musicianToSave, ContactInformation contactInformation) {
+        if (contactInformation != null){
+            musicianToSave.setContactInformation(contactInformation);
+        }
+    }
+
+    private void updatePersonalInformation(Musician musicianToSave, PersonalInformation personalInformation) {
+        if (personalInformation != null) {
+            musicianToSave.setPersonalInformation(personalInformation);
+        }
+    }
+
+    private List<InstrumentExperience> updateInstrumentExperience(List<InstrumentExperience> instrumentExperience){
+
+        List<InstrumentExperience> musicianInstrumentList = new ArrayList<>();
+        for (InstrumentExperience instrumentElement: instrumentExperience) {
+
+            Instrument musicianInstrument = instrumentService.getInstrument(instrumentElement.getInstrument().getName()).orElseThrow(()->new UsernameNotFoundException("Instrument not found"));
+            InstrumentExperience musicianInstrumentExperience = new InstrumentExperience();
+            musicianInstrumentExperience.setInstrument(musicianInstrument);
+            musicianInstrumentExperience.setExperience(instrumentElement.getExperience());
+            musicianInstrumentList.add(musicianInstrumentExperience);
+        }
+        return musicianInstrumentList;
+    }
+
+    private List<Genre> updateGenres(List<Genre> genres){
+        List<Genre> musicianGenreList = new ArrayList<>();
+        for(Genre genreElement : genres){
+            musicianGenreList.add(genreService.getGenre(genreElement.getName()).orElseThrow(()-> new UsernameNotFoundException("Genre not found")));
+        }
+        return musicianGenreList;
     }
 }

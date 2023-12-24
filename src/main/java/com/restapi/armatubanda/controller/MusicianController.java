@@ -2,6 +2,7 @@ package com.restapi.armatubanda.controller;
 
 import com.restapi.armatubanda.dto.*;
 import com.restapi.armatubanda.model.*;
+import com.restapi.armatubanda.services.AuthenticationService;
 import com.restapi.armatubanda.services.MusicianService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -26,15 +27,28 @@ public class MusicianController {
 
     private final AuthenticationController authenticationController;
 
+    private final AuthenticationService authenticationService;
+
     @GetMapping(value = "/find")
     public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(@RequestBody MusicianRequestDto request) {
         return musicianService.getMusiciansList(request);
     }
 
+    @PutMapping(value = "/createProfile",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<MusicianResponseDto> createProfileAlt(@RequestPart(value = "profileInfoDto") ProfileCreationDto profileInfoDto,
+                                                                @RequestPart(value = "profileImage", required = false)MultipartFile file) throws Exception{
+        Musician musician = this.authenticationService.getMusicianLogged();
+        MusicianResponseDto musicianResponseDto = musicianService.createProfileAlt(musician,profileInfoDto,file);
+        return ResponseEntity.ok(musicianResponseDto);
+    }
+
+
     // TODO: Implement try-catch
     @PutMapping(value = "/create-profile", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Musician> createProfile(@RequestPart(value = "profileInfoDto") ProfileCreationDto profileInfoDto,
                                                   @RequestPart(value = "profileImage", required = false)MultipartFile file) throws Exception {
+
+
         var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = ((UserDetails) principal).getUsername();
         Musician musicianToSave = musicianService.getMusician(username).orElseThrow(()-> new UsernameNotFoundException("User not found"));

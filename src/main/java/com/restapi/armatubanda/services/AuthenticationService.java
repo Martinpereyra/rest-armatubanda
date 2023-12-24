@@ -111,4 +111,17 @@ public class AuthenticationService {
         throw new ResourceNotFoundException("Usuario no encontrado.");
     }
 
+    public Musician getMusicianLogged(){
+        try {
+            var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (principal instanceof UserDetails) {
+                String username = ((UserDetails) principal).getUsername();
+                return musicianRepository.findByEmail(username)
+                        .orElseThrow(null);
+            }
+        } catch (Exception e) {
+            throw new GenericException("Hubo un error. Por favor inténtalo de nuevo más tarde.");
+        }
+        throw new ResourceNotFoundException("Usuario no encontrado.");
+    }
 }
