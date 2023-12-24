@@ -188,6 +188,9 @@ public class MusicianService {
         if (request.getCity() != null && !request.getCity().isEmpty()) {
             predicates.add(cb.like(musician.get("personalInformation").get("city"), "%" + request.getCity() + "%"));
         }
+        if(request.getCountry() != null && !request.getCountry().isEmpty()){
+            predicates.add(cb.like(musician.get("personalInformation").get("country"),"%" + request.getCountry() + "%"));
+        }
         if (request.getGenres() != null && !request.getGenres().isEmpty()) {
             predicates.add(genres.get("name").in(request.getGenres()));
         }

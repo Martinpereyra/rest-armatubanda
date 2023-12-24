@@ -15,12 +15,4 @@ import java.util.Optional;
 public interface MusicianRepository extends JpaRepository<Musician, Integer> {
 
     Optional<Musician> findByEmail(String email);
-
-    @Query("SELECT m FROM Musician m INNER JOIN m.personalInformation pi INNER JOIN m.skillsInformation si INNER JOIN si.genres g WHERE m.isProfileSet = true AND (pi.name LIKE %?1 OR ?1 IS NULL) AND (g.name IN ?2 OR ?2 IS NULL)")
-    List<Musician> findBy(String name,
-                          List<String> genres,
-                          String city,
-                          List<String> instruments,
-                          Experience exp,
-                          Boolean look);
 }
