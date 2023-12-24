@@ -16,20 +16,11 @@ public interface MusicianRepository extends JpaRepository<Musician, Integer> {
 
     Optional<Musician> findByEmail(String email);
 
-    @Query("SELECT DISTINCT m FROM Musician m " +
-            "JOIN m.personalInformation c " +
-            "JOIN m.preferenceInformation pi "+
-            "JOIN m.skillsInformation si " +
-            "JOIN si.genres s "+
-            "JOIN si.instrumentExperience ie "+
-            "JOIN Instrument i on ie.instrument.id = i.id "+
-            "WHERE m.isProfileSet = true AND " +
-            "((c.name LIKE %:name%) OR (:name IS NULL)) AND " +
-            "(c.city LIKE %:city% OR (:city IS NULL)) AND " +
-            "(s.name in :genres OR (:genres IS NULL)) AND "+
-            "(i.name in :instruments OR (:instruments IS NULL)) " +
-            "  AND (si.generalExperience = :experience OR (:experience IS NULL))" +
-            " AND (pi.lookingBands = :look OR (:look IS NULL))"
-    )
-    List<Musician> findBy(@Param("name")String name,@Param("city")String city,@Param("genres")List<String> genres,@Param("instruments")List<String> instruments,@Param("experience") Experience exp,@Param("look") Boolean look);
+    @Query("SELECT m FROM Musician m INNER JOIN m.personalInformation pi INNER JOIN m.skillsInformation si INNER JOIN si.genres g WHERE m.isProfileSet = true AND (pi.name LIKE %?1 OR ?1 IS NULL) AND (g.name IN ?2 OR ?2 IS NULL)")
+    List<Musician> findBy(String name,
+                          List<String> genres,
+                          String city,
+                          List<String> instruments,
+                          Experience exp,
+                          Boolean look);
 }

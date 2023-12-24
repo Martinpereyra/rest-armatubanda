@@ -17,6 +17,7 @@ import java.util.List;
 public class MusicianRequestDto {
     public String name;
     public String city;
+    public String country;
     public List<String> genres;
     public List<String> instruments;
     public String experience;

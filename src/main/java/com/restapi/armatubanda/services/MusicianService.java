@@ -3,7 +3,11 @@ package com.restapi.armatubanda.services;
 import com.restapi.armatubanda.dto.*;
 import com.restapi.armatubanda.model.*;
 import com.restapi.armatubanda.repository.MusicianRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.*;
+import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +31,8 @@ public class MusicianService {
     private final InstrumentService instrumentService;
 
     private final GenreService genreService;
+
+    private final EntityManager entityManager;
 
     public Optional<Musician> getMusician(String username){
         return musicianRepository.findByEmail(username);
@@ -166,35 +172,43 @@ public class MusicianService {
     }
 
     public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(MusicianRequestDto request) {
-        List<Musician> musicians;
-        List<String> genreList = new ArrayList<>();
-        List<String> instrumentList = new ArrayList<>();
-        if (request.genres != null){
-            genreList = request.getGenres();
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Musician> cq = cb.createQuery(Musician.class);
+        Root<Musician> musician = cq.from(Musician.class);
+        Join<Musician, SkillsInformation> skills = musician.join("skillsInformation", JoinType.LEFT);
+        Join<SkillsInformation, Genre> genres = skills.join("genres", JoinType.LEFT);
+        Join<SkillsInformation, InstrumentExperience> instrumentExperience = skills.join("instrumentExperience", JoinType.LEFT);
+        Join<InstrumentExperience, Instrument> instruments = instrumentExperience.join("instrument", JoinType.LEFT);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (request.getName() != null && !request.getName().isEmpty()) {
+            predicates.add(cb.like(musician.get("personalInformation").get("name"), "%" + request.getName() + "%"));
         }
-        if (request.instruments != null){
-            instrumentList = request.getInstruments();
+        if (request.getCity() != null && !request.getCity().isEmpty()) {
+            predicates.add(cb.like(musician.get("personalInformation").get("city"), "%" + request.getCity() + "%"));
         }
-        Experience exp = null;
-        if (request.getExperience() != null){
-            exp = Experience.valueOf(request.getExperience());
+        if (request.getGenres() != null && !request.getGenres().isEmpty()) {
+            predicates.add(genres.get("name").in(request.getGenres()));
         }
-        Boolean look = null;
-        if (request.getLookingBand() != null){
-            look = request.getLookingBand();
+        if (request.getInstruments() != null && !request.getInstruments().isEmpty()) {
+            predicates.add(instruments.get("name").in(request.getInstruments()));
         }
-        if (request.getName() == null && request.getCity() == null && (genreList.isEmpty()) && (instrumentList.isEmpty())){
-            musicians = musicianRepository.findAll()
-                    .stream()
-                    .filter(Musician::isProfileSet)
-                    .collect(Collectors.toList());
-        } else {
-            musicians = musicianRepository.findBy(request.getName(), request.getCity(),request.getGenres(),request.getInstruments(),exp,look);
+        if (request.getExperience() != null && !request.getExperience().isEmpty()) {
+            predicates.add(cb.equal(skills.get("generalExperience"), Experience.valueOf(request.getExperience())));
         }
+
+        cq.where(predicates.toArray(new Predicate[0]));
+        TypedQuery<Musician> query = entityManager.createQuery(cq);
+
         List<MusicianResponseDto> responseMusicians = new ArrayList<>();
-        musicians.forEach(musician -> {
-            responseMusicians.add(createMusicianResponseDto(musician));
+
+        List<Musician> musicians = query.getResultList();
+
+        musicians.forEach(musicianArray -> {
+            responseMusicians.add(createMusicianResponseDto(musicianArray));
         });
+
         return ResponseEntity.ok(responseMusicians);
     }
 
