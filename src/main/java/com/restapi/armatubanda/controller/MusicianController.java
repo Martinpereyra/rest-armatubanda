@@ -34,41 +34,12 @@ public class MusicianController {
         return musicianService.getMusiciansList(request);
     }
 
-    @PutMapping(value = "/createProfile",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PutMapping(value = "/create-profile",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<MusicianResponseDto> createProfileAlt(@RequestPart(value = "profileInfoDto") ProfileCreationDto profileInfoDto,
                                                                 @RequestPart(value = "profileImage", required = false)MultipartFile file) throws Exception{
         Musician musician = this.authenticationService.getMusicianLogged();
         MusicianResponseDto musicianResponseDto = musicianService.createProfileAlt(musician,profileInfoDto,file);
         return ResponseEntity.ok(musicianResponseDto);
-    }
-
-
-    // TODO: Implement try-catch
-    @PutMapping(value = "/create-profile", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<Musician> createProfile(@RequestPart(value = "profileInfoDto") ProfileCreationDto profileInfoDto,
-                                                  @RequestPart(value = "profileImage", required = false)MultipartFile file) throws Exception {
-
-
-        var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
-        Musician musicianToSave = musicianService.getMusician(username).orElseThrow(()-> new UsernameNotFoundException("User not found"));
-        if(!musicianToSave.isProfileSet()){
-        PersonalInformation personalInformation = profileInfoDto.getPersonalInformation();
-        ContactInformation contactInformation = profileInfoDto.getContactInformation();
-        SkillsInformation skillsInformation = profileInfoDto.getSkillsInformation();
-        EducationInformation educationInformation = profileInfoDto.getEducationInformation();
-        CareerInformation careerInformation = profileInfoDto.getCareerInformation();
-        BiographyInformation biographyInformation = profileInfoDto.getBiographyInformation();
-        PreferenceInformation preferenceInformation = profileInfoDto.getPreferenceInformation();
-        Image image = null;
-        if(file != null) {
-            image = musicianService.uploadProfileImage(file);
-        }
-        return musicianService.createProfile(musicianToSave,personalInformation,contactInformation,skillsInformation,educationInformation,careerInformation,biographyInformation,preferenceInformation, image);
-        }
-        else{
-            throw new Exception("No se puede registrar");
-        }
     }
 
     @GetMapping("/basicinfo")
