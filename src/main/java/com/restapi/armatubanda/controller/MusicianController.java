@@ -44,9 +44,7 @@ public class MusicianController {
 
     @GetMapping("/basicinfo")
     public PersonalInformation getPersonalInformation(){
-        var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
-        Musician musician = musicianService.getMusician(username).orElseThrow(()->new UsernameNotFoundException("User not found"));
+        Musician musician = this.authenticationService.getMusicianLogged();
         return musician.getPersonalInformation();
     }
 
