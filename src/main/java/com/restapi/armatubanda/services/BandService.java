@@ -27,22 +27,15 @@ public class BandService {
     private final GenreService genreService;
 
 
-    public ResponseEntity<BandCreationDto> createBand(BandCreationDto bandCreationDto, Musician bandLeader, MultipartFile file) throws IOException {
+    public BandCreationDto createBand(BandCreationDto bandCreationDto, Musician bandLeader, MultipartFile file) throws IOException {
 
-        List<Genre> genreList = bandCreationDto.getBandGenres();
-        List<Genre> bandGenreList = new ArrayList<>();
-
-        for(Genre genreElement : genreList){
-            bandGenreList.add(genreService.getGenre(genreElement.getName()).orElseThrow(()-> new UsernameNotFoundException("Genre not found")));
-        }
-
-
-
+        List<Genre> genreList = genreService.getGenreList(bandCreationDto.getBandGenres());
+        
         var bandToSave = Band.builder()
                 .bandInfo(bandCreationDto.getBandInfo())
                 .bandContactInfo(bandCreationDto.getBandContactInfo())
                 .musicianLeader(bandLeader)
-                .genres(bandGenreList)
+                .genres(genreList)
                 .build();
 
         if (file != null){
@@ -51,18 +44,26 @@ public class BandService {
         }
 
 
-        bandRepository.save(bandToSave);
+        Band savedBand = bandRepository.save(bandToSave);
+        return convertToBandCreationDto(savedBand);
 
-        var responseBand = BandCreationDto.builder()
-                .bandInfo(bandToSave.getBandInfo())
-                .bandContactInfo(bandToSave.getBandContactInfo())
-                .leaderName(bandToSave.getMusicianLeader().getPersonalInformation().getName())
-                .bandGenres(bandToSave.getGenres())
-                .bandProfileImage(bandToSave.getImage())
-                .build();
+    }
 
-        return ResponseEntity.ok(responseBand);
+    private BandCreationDto convertToBandCreationDto(Band band) {
+        BandCreationDto bandCreationDto = new BandCreationDto();
 
+        bandCreationDto.setBandInfo(band.getBandInfo());
+        bandCreationDto.setBandContactInfo(band.getBandContactInfo());
+
+        if (band.getMusicianLeader() != null && band.getMusicianLeader().getPersonalInformation() != null) {
+            String leaderName = band.getMusicianLeader().getPersonalInformation().getName();
+            bandCreationDto.setLeaderName(leaderName);
+        }
+
+        bandCreationDto.setBandProfileImage(band.getImage());
+        bandCreationDto.setBandGenres(band.getGenres());
+
+        return bandCreationDto;
     }
 
     public Image uploadProfileImage(MultipartFile file) throws IOException {

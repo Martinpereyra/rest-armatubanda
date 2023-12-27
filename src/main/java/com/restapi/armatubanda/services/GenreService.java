@@ -4,8 +4,10 @@ import com.restapi.armatubanda.model.Genre;
 import com.restapi.armatubanda.repository.GenreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,4 +46,12 @@ public class GenreService {
     }
 
     public Optional<Genre> getGenre(String name){return genreRepository.findGenreByName(name);}
+
+    public List<Genre> getGenreList(List<Genre> genres){
+        List<Genre> musicianGenreList = new ArrayList<>();
+        for(Genre genreElement : genres){
+            musicianGenreList.add(this.getGenre(genreElement.getName()).orElseThrow(()-> new UsernameNotFoundException("Genre not found")));
+        }
+        return musicianGenreList;
+    }
 }

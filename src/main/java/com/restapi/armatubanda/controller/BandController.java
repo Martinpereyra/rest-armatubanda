@@ -3,11 +3,9 @@ package com.restapi.armatubanda.controller;
 
 import com.restapi.armatubanda.dto.BandCreationDto;
 import com.restapi.armatubanda.dto.BandMemberDto;
-import com.restapi.armatubanda.dto.InvitationRequestDto;
 import com.restapi.armatubanda.model.Band;
-import com.restapi.armatubanda.model.Invitation;
 import com.restapi.armatubanda.model.Musician;
-import com.restapi.armatubanda.repository.InvitationRepository;
+import com.restapi.armatubanda.services.AuthenticationService;
 import com.restapi.armatubanda.services.BandService;
 import com.restapi.armatubanda.services.InvitationService;
 import com.restapi.armatubanda.services.MusicianService;
@@ -18,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,17 +30,21 @@ public class BandController {
 
     private final MusicianService musicianService;
     private final BandService bandService;
+    private final AuthenticationService authenticationService;
     private final InvitationService invitationService;
-
-    @PostMapping(value = "/create-band", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/createBand", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<BandCreationDto> createBand(@RequestPart("band") BandCreationDto band,
-                                                      @RequestPart(value = "bandImageFile", required = false) MultipartFile file) throws Exception {
-        var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
-        Musician bandLeader = musicianService.getMusician(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        return bandService.createBand(band, bandLeader, file);
-
+                                                    @RequestPart(value = "bandImageFile", required = false) MultipartFile file) throws Exception {
+        try {
+            Musician bandLeader = authenticationService.getMusicianLogged();
+            BandCreationDto createdBand = bandService.createBand(band, bandLeader, file);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdBand);
+        } catch (Exception e) {
+            Exception errorResponse = new Exception(
+                    e.getMessage()
+            );
+            throw new Exception(errorResponse);
+        }
     }
 
     @GetMapping(value = "/{bandId}")
