@@ -3,6 +3,7 @@ package com.restapi.armatubanda.controller;
 
 import com.restapi.armatubanda.dto.BandCreationDto;
 import com.restapi.armatubanda.dto.BandMemberDto;
+import com.restapi.armatubanda.dto.BandRequestDto;
 import com.restapi.armatubanda.model.Band;
 import com.restapi.armatubanda.model.Musician;
 import com.restapi.armatubanda.services.AuthenticationService;
@@ -32,6 +33,7 @@ public class BandController {
     private final BandService bandService;
     private final AuthenticationService authenticationService;
     private final InvitationService invitationService;
+
     @PostMapping(value = "/createBand", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<BandCreationDto> createBand(@RequestPart("band") BandCreationDto band,
                                                     @RequestPart(value = "bandImageFile", required = false) MultipartFile file) throws Exception {
@@ -61,21 +63,25 @@ public class BandController {
     }
 
     @DeleteMapping(value = "/delete/{bandId}")
-    public HttpStatus deleteBand(@PathVariable int bandId) {
-        var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
-        Musician bandLeader = musicianService.getMusician(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    public HttpStatus deleteBand(@PathVariable int bandId) throws Exception {
 
+        Musician bandLeader = authenticationService.getMusicianLogged();
         Band bandToDelete = this.bandService.getBandById(bandId);
 
         if (bandToDelete.getMusicianLeader().getId() == bandLeader.getId()) {
-            this.invitationService.deleteAllBandInvitations(bandToDelete.getId());
-            this.bandService.deleteBand(bandToDelete);
-            return HttpStatus.OK;
+            try {
+                this.invitationService.deleteAllBandInvitations(bandToDelete.getId());
+                this.bandService.deleteBand(bandToDelete);
+                return HttpStatus.OK;
+            }catch (Exception e){
+                Exception errorResponse = new Exception(
+                        e.getMessage()
+                );
+                throw new Exception(errorResponse);
+            }
         } else {
             return HttpStatus.BAD_REQUEST;
         }
-
     }
 
     @PutMapping(value = "/delete/member")
@@ -97,5 +103,11 @@ public class BandController {
             }
         }
         return HttpStatus.BAD_REQUEST;
+    }
+
+
+    @GetMapping(value = "/find")
+    public ResponseEntity<List<BandCreationDto>> getBandList(@RequestBody BandRequestDto bandRequestDto){
+        return bandService.getBandList(bandRequestDto);
     }
 }
