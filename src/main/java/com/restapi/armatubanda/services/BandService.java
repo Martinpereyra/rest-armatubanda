@@ -2,11 +2,12 @@ package com.restapi.armatubanda.services;
 
 
 import com.restapi.armatubanda.dto.BandCreationDto;
-import com.restapi.armatubanda.model.Band;
-import com.restapi.armatubanda.model.Genre;
-import com.restapi.armatubanda.model.Image;
-import com.restapi.armatubanda.model.Musician;
+import com.restapi.armatubanda.dto.BandRequestDto;
+import com.restapi.armatubanda.model.*;
 import com.restapi.armatubanda.repository.BandRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,23 +27,18 @@ public class BandService {
 
     private final GenreService genreService;
 
-
-    public ResponseEntity<BandCreationDto> createBand(BandCreationDto bandCreationDto, Musician bandLeader, MultipartFile file) throws IOException {
-
-        List<Genre> genreList = bandCreationDto.getBandGenres();
-        List<Genre> bandGenreList = new ArrayList<>();
-
-        for(Genre genreElement : genreList){
-            bandGenreList.add(genreService.getGenre(genreElement.getName()).orElseThrow(()-> new UsernameNotFoundException("Genre not found")));
-        }
+    private final EntityManager entityManager;
 
 
+    public BandCreationDto createBand(BandCreationDto bandCreationDto, Musician bandLeader, MultipartFile file) throws IOException {
 
+        List<Genre> genreList = genreService.getGenreList(bandCreationDto.getBandGenres());
+        
         var bandToSave = Band.builder()
                 .bandInfo(bandCreationDto.getBandInfo())
                 .bandContactInfo(bandCreationDto.getBandContactInfo())
                 .musicianLeader(bandLeader)
-                .genres(bandGenreList)
+                .genres(genreList)
                 .build();
 
         if (file != null){
@@ -51,18 +47,26 @@ public class BandService {
         }
 
 
-        bandRepository.save(bandToSave);
+        Band savedBand = bandRepository.save(bandToSave);
+        return convertToBandCreationDto(savedBand);
 
-        var responseBand = BandCreationDto.builder()
-                .bandInfo(bandToSave.getBandInfo())
-                .bandContactInfo(bandToSave.getBandContactInfo())
-                .leaderName(bandToSave.getMusicianLeader().getPersonalInformation().getName())
-                .bandGenres(bandToSave.getGenres())
-                .bandProfileImage(bandToSave.getImage())
-                .build();
+    }
 
-        return ResponseEntity.ok(responseBand);
+    private BandCreationDto convertToBandCreationDto(Band band) {
+        BandCreationDto bandCreationDto = new BandCreationDto();
 
+        bandCreationDto.setBandInfo(band.getBandInfo());
+        bandCreationDto.setBandContactInfo(band.getBandContactInfo());
+
+        if (band.getMusicianLeader() != null && band.getMusicianLeader().getPersonalInformation() != null) {
+            String leaderName = band.getMusicianLeader().getPersonalInformation().getName();
+            bandCreationDto.setLeaderName(leaderName);
+        }
+
+        bandCreationDto.setBandProfileImage(band.getImage());
+        bandCreationDto.setBandGenres(band.getGenres());
+
+        return bandCreationDto;
     }
 
     public Image uploadProfileImage(MultipartFile file) throws IOException {
@@ -87,5 +91,52 @@ public class BandService {
 
     public void updateBand(Band band) {
         this.bandRepository.save(band);
+    }
+
+    public ResponseEntity<List<BandCreationDto>> getBandList(BandRequestDto bandRequest) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Band> cq = cb.createQuery(Band.class);
+        Root<Band> band = cq.from(Band.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        if(bandRequest.getBandName() != null && !bandRequest.getBandName().isEmpty()){
+            predicates.add(cb.like(band.get("bandInfo").get("name"),"%" + bandRequest.getBandName() + "%"));
+        }
+
+        if(bandRequest.getBandCountry() != null && !bandRequest.getBandCountry().isEmpty()){
+            predicates.add(cb.like(band.get("bandInfo").get("country"),"%" + bandRequest.getBandCountry() + "%"));
+        }
+
+        if(bandRequest.getBandCity() != null && !bandRequest.getBandCity().isEmpty()){
+            predicates.add(cb.like(band.get("bandInfo").get("city"),"%" + bandRequest.getBandCity() + "%"));
+        }
+
+        if (bandRequest.getBandGenres() != null && !bandRequest.getBandGenres().isEmpty()) {
+            predicates.add(band.get("genres").get("name").in(bandRequest.getBandGenres()));
+        }
+
+        cq.where(predicates.toArray(new Predicate[0]));
+        TypedQuery<Band> query = entityManager.createQuery(cq);
+
+        List<BandCreationDto> responseBand = new ArrayList<>();
+
+        List<Band> bands = query.getResultList();
+
+        bands.forEach(bandArray -> {
+            responseBand.add(createBandResponseDto(bandArray));
+        });
+
+        return ResponseEntity.ok(responseBand);
+    }
+
+    private BandCreationDto createBandResponseDto(Band band) {
+        return BandCreationDto.builder()
+                .bandGenres(band.getGenres())
+                .bandProfileImage(band.getImage())
+                .bandInfo(band.getBandInfo())
+                .bandContactInfo(band.getBandContactInfo())
+                .leaderName(band.getMusicianLeader().getPersonalInformation().getName())
+                .build();
     }
 }

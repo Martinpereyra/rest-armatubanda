@@ -32,17 +32,13 @@ public class SkillsInformation {
     @JsonIgnore
     private int id;
 
-
-
     @OneToMany(cascade=CascadeType.ALL)
     private List<InstrumentExperience> instrumentExperience;
-
 
     @ManyToMany
     private List<Genre> genres;
 
     @Enumerated(EnumType.STRING)
     private Experience generalExperience;
-
 
 }
