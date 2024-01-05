@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Data
@@ -25,6 +26,9 @@ public class BandAdvertisement {
     @ManyToOne
     @JoinColumn(name = "band_id")
     private Band band;
+
+    @ManyToMany
+    private List<Genre> genres;
 
     @CreationTimestamp
     private Instant createdOn;
