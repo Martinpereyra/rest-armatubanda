@@ -29,10 +29,13 @@ public class MusicianController {
 
     private final AuthenticationService authenticationService;
 
-    @GetMapping(value = "/find")
-    public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(@RequestBody MusicianRequestDto request) {
+    @GetMapping()
+    public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(@ModelAttribute MusicianRequestDto request) {
         return musicianService.getMusiciansList(request);
     }
+
+    // TODO: Update musician profile info PUT METHOD
+
 
     @PutMapping(value = "/create-profile",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<MusicianResponseDto> createProfileAlt(@RequestPart(value = "profileInfoDto") ProfileCreationDto profileInfoDto,

@@ -106,7 +106,7 @@ public class BandController {
     }
 
 
-    @GetMapping(value = "/find")
+    @GetMapping()
     public ResponseEntity<List<BandCreationDto>> getBandList(@RequestBody BandRequestDto bandRequestDto){
         return bandService.getBandList(bandRequestDto);
     }
