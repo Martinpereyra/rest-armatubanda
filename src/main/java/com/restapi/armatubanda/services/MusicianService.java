@@ -2,6 +2,7 @@ package com.restapi.armatubanda.services;
 
 import com.restapi.armatubanda.dto.*;
 import com.restapi.armatubanda.model.*;
+import com.restapi.armatubanda.repository.BandRepository;
 import com.restapi.armatubanda.repository.MusicianRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
@@ -31,6 +32,8 @@ public class MusicianService {
     private final InstrumentService instrumentService;
 
     private final GenreService genreService;
+
+    private final BandRepository bandRepository;
 
     private final EntityManager entityManager;
 
@@ -341,5 +344,26 @@ public class MusicianService {
             musicianGenreList.add(genreService.getGenre(genreElement.getName()).orElseThrow(()-> new UsernameNotFoundException("Genre not found")));
         }
         return musicianGenreList;
+    }
+
+    public ResponseEntity<List<MusicianBandsDto>> getMusicianBands(int musicianId) {
+
+        List<Band> musicianBands = bandRepository.findAlLByMembers_Id(musicianId);
+
+        List<MusicianBandsDto> responseMusicianBands = new ArrayList<>();
+
+        for(Band band : musicianBands){
+
+            MusicianBandsDto bandDto = MusicianBandsDto.builder()
+                    .bandId(band.getId())
+                    .bandName(band.getBandInfo().getName())
+                    .bandImage(band.getImage())
+                    .build();
+
+            responseMusicianBands.add(bandDto);
+        }
+
+        return ResponseEntity.ok(responseMusicianBands);
+
     }
 }

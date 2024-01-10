@@ -5,6 +5,7 @@ import com.restapi.armatubanda.model.*;
 import com.restapi.armatubanda.services.AuthenticationService;
 import com.restapi.armatubanda.services.MusicianService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -97,6 +98,11 @@ public class MusicianController {
         return musicianService.getPosts(id);
     }
 
+
+    @GetMapping(value = "/{musicianId}/bands")
+    public ResponseEntity<List<MusicianBandsDto>> getMusicianBands(@PathVariable("musicianId") int musicianId){
+        return musicianService.getMusicianBands(musicianId);
+    }
 
 
 }

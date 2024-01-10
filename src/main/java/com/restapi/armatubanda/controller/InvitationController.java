@@ -5,6 +5,7 @@ import com.restapi.armatubanda.dto.InvitationStatusDto;
 import com.restapi.armatubanda.model.Band;
 import com.restapi.armatubanda.model.Invitation;
 import com.restapi.armatubanda.model.Musician;
+import com.restapi.armatubanda.services.AuthenticationService;
 import com.restapi.armatubanda.services.BandService;
 import com.restapi.armatubanda.services.InvitationService;
 import com.restapi.armatubanda.services.MusicianService;
@@ -26,6 +27,7 @@ public class InvitationController {
     private final MusicianService musicianService;
     private final BandService bandService;
     private final InvitationService invitationService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping(value="/invite")
     public ResponseEntity<Invitation> inviteMusician(@RequestBody InvitationRequestDto invitationRequestDto) throws Exception {
@@ -51,9 +53,7 @@ public class InvitationController {
 
     @PutMapping(value = "/change")
     public ResponseEntity<InvitationStatusDto> changeInvitationStatus(@RequestBody InvitationStatusDto invitationStatusDto) throws Exception {
-        var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
-        Musician musicianInvited = musicianService.getMusician(username).orElseThrow(()-> new UsernameNotFoundException("User not found"));
+        Musician musicianInvited = authenticationService.getMusicianLogged();
         if (invitationStatusDto.getMusicianId() == musicianInvited.getId()){
             return this.invitationService.changeInvitationStatus(invitationStatusDto);
         }
