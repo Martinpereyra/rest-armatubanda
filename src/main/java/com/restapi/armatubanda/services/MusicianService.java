@@ -366,4 +366,24 @@ public class MusicianService {
         return ResponseEntity.ok(responseMusicianBands);
 
     }
+
+    public ResponseEntity<List<MusicianBandsDto>> getMusicianLeaderBands(int musicianId){
+
+        List<Band> musicianLeaderBands = bandRepository.findByMusicianLeaderId(musicianId);
+        List<MusicianBandsDto> musicianLeaderBandsDto = new ArrayList<>();
+
+        for (Band band : musicianLeaderBands){
+            MusicianBandsDto bandDto = MusicianBandsDto.builder()
+                    .bandId(band.getId())
+                    .bandName(band.getBandInfo().getName())
+                    .bandImage(band.getImage())
+                    .build();
+
+            musicianLeaderBandsDto.add(bandDto);
+        }
+
+        return ResponseEntity.ok(musicianLeaderBandsDto);
+
+
+    }
 }
