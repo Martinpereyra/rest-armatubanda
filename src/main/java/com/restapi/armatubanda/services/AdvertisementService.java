@@ -5,6 +5,7 @@ import com.restapi.armatubanda.dto.AdvertisementRequestDto;
 import com.restapi.armatubanda.dto.AdvertisementResponseDto;
 import com.restapi.armatubanda.model.Band;
 import com.restapi.armatubanda.model.BandAdvertisement;
+import com.restapi.armatubanda.model.Genre;
 import com.restapi.armatubanda.model.Musician;
 import com.restapi.armatubanda.repository.AdvertisementRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,15 +23,21 @@ public class AdvertisementService {
 
     private final AdvertisementRepository advertisementRepository;
 
+    private final GenreService genreService;
+
     public ResponseEntity<BandAdvertisement> createAd(Musician bandLeader, Band band, AdvertisementRequestDto advertisementRequestDto) throws Exception {
 
         try{
             if (band.getMusicianLeader() != bandLeader){
                 throw new Exception();
             }
+
+            List<Genre> genreList = genreService.getGenreList(advertisementRequestDto.getGenres());
+
             BandAdvertisement ad = BandAdvertisement.builder()
                     .band(band)
                     .description(advertisementRequestDto.getDescription())
+                    .genres(genreList)
                     .build();
             return ResponseEntity.ok(advertisementRepository.save(ad));
         }catch(Exception e){

@@ -1,6 +1,7 @@
 package com.restapi.armatubanda.dto;
 
 
+import com.restapi.armatubanda.model.Genre;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +19,6 @@ public class AdvertisementRequestDto {
 
     public int bandId;
 
-    public List<String> genres;
+    public List<Genre> genres;
 
 }
