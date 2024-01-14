@@ -2,6 +2,7 @@ package com.restapi.armatubanda.services;
 
 
 import com.restapi.armatubanda.dto.AdvertisementRequestDto;
+import com.restapi.armatubanda.dto.AdvertisementResponseDto;
 import com.restapi.armatubanda.model.Band;
 import com.restapi.armatubanda.model.BandAdvertisement;
 import com.restapi.armatubanda.model.Musician;
@@ -11,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -43,4 +47,24 @@ public class AdvertisementService {
         advertisementRepository.deleteById(adId);
         return HttpStatus.OK;
     }
+
+    public List<AdvertisementResponseDto> getAllAds() {
+        return convertAds(advertisementRepository.findAll());
+    }
+
+    public List<AdvertisementResponseDto> convertAds(List<BandAdvertisement> adList){
+        List<AdvertisementResponseDto> convertedList = new ArrayList<>();
+        for(BandAdvertisement ad : adList){
+            AdvertisementResponseDto convertedAd = AdvertisementResponseDto.builder()
+                    .bandId(ad.getBand().getId())
+                    .bandImage(ad.getBand().getImage())
+                    .description(ad.getDescription())
+                    .genres(ad.getGenres())
+                    .build();
+
+            convertedList.add(convertedAd);
+        }
+        return convertedList;
+    }
+
 }

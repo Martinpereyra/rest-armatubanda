@@ -1,6 +1,7 @@
 package com.restapi.armatubanda.controller;
 
 import com.restapi.armatubanda.dto.AdvertisementRequestDto;
+import com.restapi.armatubanda.dto.AdvertisementResponseDto;
 import com.restapi.armatubanda.model.Band;
 import com.restapi.armatubanda.model.BandAdvertisement;
 import com.restapi.armatubanda.model.Musician;
@@ -11,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/ad")
@@ -41,6 +44,11 @@ public class AdvertisementController {
     public HttpStatus deleteAd(@PathVariable int adId) throws Exception {
         Musician bandLeader = authenticationService.getMusicianLogged();
         return advertisementService.deleteAd(bandLeader,adId);
+    }
+
+    @GetMapping()
+    public List<AdvertisementResponseDto> getAllAds(){
+        return advertisementService.getAllAds();
     }
 
 
