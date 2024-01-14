@@ -30,17 +30,20 @@ public class AdvertisementController {
         try{
             Musician bandLeader = authenticationService.getMusicianLogged();
             Band band = bandService.getBandById(advertisementRequestDto.getBandId());
-
-            if (band.getMusicianLeader() != bandLeader){
-                throw new Exception();
-            }
-
-            return advertisementService.createAd(band,advertisementRequestDto);
+            return advertisementService.createAd(bandLeader,band,advertisementRequestDto);
 
         } catch (Exception e) {
             throw new Exception(e);
         }
-
-
     }
+
+    @DeleteMapping(value = "/delete/{adId}")
+    public HttpStatus deleteAd(@PathVariable int adId) throws Exception {
+        Musician bandLeader = authenticationService.getMusicianLogged();
+        return advertisementService.deleteAd(bandLeader,adId);
+    }
+
+
+
+
 }
