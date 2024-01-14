@@ -3,10 +3,7 @@ package com.restapi.armatubanda.services;
 
 import com.restapi.armatubanda.dto.AdvertisementRequestDto;
 import com.restapi.armatubanda.dto.AdvertisementResponseDto;
-import com.restapi.armatubanda.model.Band;
-import com.restapi.armatubanda.model.BandAdvertisement;
-import com.restapi.armatubanda.model.Genre;
-import com.restapi.armatubanda.model.Musician;
+import com.restapi.armatubanda.model.*;
 import com.restapi.armatubanda.repository.AdvertisementRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,6 +22,8 @@ public class AdvertisementService {
 
     private final GenreService genreService;
 
+    private final InstrumentService instrumentService;
+
     public ResponseEntity<BandAdvertisement> createAd(Musician bandLeader, Band band, AdvertisementRequestDto advertisementRequestDto) throws Exception {
 
         try{
@@ -33,11 +32,13 @@ public class AdvertisementService {
             }
 
             List<Genre> genreList = genreService.getGenreList(advertisementRequestDto.getGenres());
+            List<Instrument> instrumentList = instrumentService.getInstrumentList(advertisementRequestDto.getInstruments());
 
             BandAdvertisement ad = BandAdvertisement.builder()
                     .band(band)
                     .description(advertisementRequestDto.getDescription())
                     .genres(genreList)
+                    .instruments(instrumentList)
                     .build();
             return ResponseEntity.ok(advertisementRepository.save(ad));
         }catch(Exception e){
@@ -67,6 +68,7 @@ public class AdvertisementService {
                     .bandImage(ad.getBand().getImage())
                     .description(ad.getDescription())
                     .genres(ad.getGenres())
+                    .instruments(ad.getInstruments())
                     .build();
 
             convertedList.add(convertedAd);

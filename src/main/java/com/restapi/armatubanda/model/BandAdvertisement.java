@@ -30,6 +30,9 @@ public class BandAdvertisement {
     @ManyToMany
     private List<Genre> genres;
 
+    @ManyToMany
+    private List<Instrument> instruments;
+
     @CreationTimestamp
     private Instant createdOn;
 }
