@@ -93,27 +93,32 @@ public class BandService {
         this.bandRepository.save(band);
     }
 
-    public ResponseEntity<List<BandCreationDto>> getBandList(BandRequestDto bandRequest) {
+    public ResponseEntity<List<BandCreationDto>> getBandList(
+            String name,
+            String country,
+            String city,
+            List<String> genres
+    ) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Band> cq = cb.createQuery(Band.class);
         Root<Band> band = cq.from(Band.class);
 
         List<Predicate> predicates = new ArrayList<>();
 
-        if(bandRequest.getBandName() != null && !bandRequest.getBandName().isEmpty()){
-            predicates.add(cb.like(band.get("bandInfo").get("name"),"%" + bandRequest.getBandName() + "%"));
+        if(name != null && !name.isEmpty()){
+            predicates.add(cb.like(band.get("bandInfo").get("name"),"%" + name + "%"));
         }
 
-        if(bandRequest.getBandCountry() != null && !bandRequest.getBandCountry().isEmpty()){
-            predicates.add(cb.like(band.get("bandInfo").get("country"),"%" + bandRequest.getBandCountry() + "%"));
+        if(country != null && !country.isEmpty()){
+            predicates.add(cb.like(band.get("bandInfo").get("country"),"%" + country + "%"));
         }
 
-        if(bandRequest.getBandCity() != null && !bandRequest.getBandCity().isEmpty()){
-            predicates.add(cb.like(band.get("bandInfo").get("city"),"%" + bandRequest.getBandCity() + "%"));
+        if(city != null && !city.isEmpty()){
+            predicates.add(cb.like(band.get("bandInfo").get("city"),"%" + city + "%"));
         }
 
-        if (bandRequest.getBandGenres() != null && !bandRequest.getBandGenres().isEmpty()) {
-            predicates.add(band.get("genres").get("name").in(bandRequest.getBandGenres()));
+        if (genres != null && !genres.isEmpty()) {
+            predicates.add(band.get("genres").get("name").in(genres));
         }
 
         cq.where(predicates.toArray(new Predicate[0]));

@@ -107,7 +107,12 @@ public class BandController {
 
 
     @GetMapping()
-    public ResponseEntity<List<BandCreationDto>> getBandList(@RequestBody BandRequestDto bandRequestDto){
-        return bandService.getBandList(bandRequestDto);
+    public ResponseEntity<List<BandCreationDto>> getBandList(
+            @RequestParam(value = "name",required = false) String name,
+            @RequestParam(value = "country",required = false) String country,
+            @RequestParam(value = "city",required = false) String city,
+            @RequestParam(value = "genres",required = false) List<String> genres
+    ){
+        return bandService.getBandList(name,country,city,genres);
     }
 }
