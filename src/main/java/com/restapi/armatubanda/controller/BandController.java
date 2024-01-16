@@ -34,7 +34,7 @@ public class BandController {
     private final AuthenticationService authenticationService;
     private final InvitationService invitationService;
 
-    @PostMapping(value = "/createBand", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<BandCreationDto> createBand(@RequestPart("band") BandCreationDto band,
                                                     @RequestPart(value = "bandImageFile", required = false) MultipartFile file) throws Exception {
         try {

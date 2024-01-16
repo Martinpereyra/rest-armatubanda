@@ -1,5 +1,8 @@
 package com.restapi.armatubanda.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.restapi.armatubanda.dto.AdvertisementFilterDto;
 import com.restapi.armatubanda.dto.AdvertisementRequestDto;
 import com.restapi.armatubanda.dto.AdvertisementResponseDto;
 import com.restapi.armatubanda.model.Band;
@@ -27,7 +30,7 @@ public class AdvertisementController {
 
     private final BandService bandService;
 
-    @PostMapping(value = "/create")
+    @PostMapping()
     public ResponseEntity<BandAdvertisement> createAd(@RequestBody AdvertisementRequestDto advertisementRequestDto) throws Exception {
 
         try{
@@ -47,11 +50,9 @@ public class AdvertisementController {
     }
 
     @GetMapping()
-    public List<AdvertisementResponseDto> getAllAds(){
-        return advertisementService.getAllAds();
+    public List<AdvertisementResponseDto> getAdList(
+            @RequestParam(value = "instruments",required = false) List<String> instruments,
+            @RequestParam(value = "genres",required = false) List<String> genres) {
+        return advertisementService.getAdList(instruments,genres);
     }
-
-
-
-
 }

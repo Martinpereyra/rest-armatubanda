@@ -54,4 +54,14 @@ public class GenreService {
         }
         return musicianGenreList;
     }
+
+    public List<Genre> getGenreListString(List<String> genresNames) throws UsernameNotFoundException{
+        List<Genre> responseList = new ArrayList<>();
+
+        for(String genreName:genresNames){
+            responseList.add(this.genreRepository.findGenreByName(genreName).orElseThrow(()-> new UsernameNotFoundException("Genre not found")));
+        }
+
+        return responseList;
+    }
 }

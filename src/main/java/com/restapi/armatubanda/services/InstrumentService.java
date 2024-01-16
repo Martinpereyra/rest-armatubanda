@@ -4,6 +4,7 @@ import com.restapi.armatubanda.model.Instrument;
 import com.restapi.armatubanda.repository.InstrumentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -37,14 +38,20 @@ public class InstrumentService {
         }
     }
 
-    public List<Instrument> getInstrumentList(List<Instrument> instruments) throws Exception {
+    public List<Instrument> getInstrumentList(List<Instrument> instruments) throws UsernameNotFoundException {
         List<Instrument> convertedList = new ArrayList<>();
         for(Instrument instrument : instruments){
-            convertedList.add(this.getInstrument(instrument.getName()).orElseThrow(()-> new Exception()));
+            convertedList.add(this.getInstrument(instrument.getName()).orElseThrow(()-> new UsernameNotFoundException("Instrument not found")));
         }
         return convertedList;
+    }
 
-
+    public List<Instrument> getInstrumentListString(List<String> instrumentsName) throws UsernameNotFoundException {
+        List<Instrument> responseList = new ArrayList<>();
+        for(String instrumentName : instrumentsName){
+            responseList.add(this.instrumentRepository.findInstrumentByName(instrumentName).orElseThrow(()-> new UsernameNotFoundException("Instrument not found")));
+        }
+        return responseList;
     }
 
 }

@@ -31,14 +31,21 @@ public class MusicianController {
     private final AuthenticationService authenticationService;
 
     @GetMapping()
-    public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(@ModelAttribute MusicianRequestDto request) {
-        return musicianService.getMusiciansList(request);
+    public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(
+            @RequestParam(value = "name",required = false) String name,
+            @RequestParam(value = "city",required = false) String city,
+            @RequestParam(value = "country",required = false) String country,
+            @RequestParam(value = "genres",required = false) List<String> genres,
+            @RequestParam(value = "instruments",required = false) List<String> instruments,
+            @RequestParam(value = "experience",required = false) String experience,
+            @RequestParam(value = "lookingBand",required = false) Boolean lookingBand) {
+        return musicianService.getMusiciansList(name,city,country,genres,instruments,experience,lookingBand);
     }
 
     // TODO: Update musician profile info PUT METHOD
 
 
-    @PutMapping(value = "/create-profile",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PutMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<MusicianResponseDto> createProfileAlt(@RequestPart(value = "profileInfoDto") ProfileCreationDto profileInfoDto,
                                                                 @RequestPart(value = "profileImage", required = false)MultipartFile file) throws Exception{
         Musician musician = this.authenticationService.getMusicianLogged();

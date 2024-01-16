@@ -88,7 +88,15 @@ public class MusicianService {
         return ResponseEntity.ok(reviews);
     }
 
-    public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(MusicianRequestDto request) {
+    public ResponseEntity<List<MusicianResponseDto>> getMusiciansList(
+            String name,
+            String city,
+            String country,
+            List<String> musicianGenres,
+            List<String> musicianInstruments,
+            String experience,
+            Boolean lookingBand
+    ) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Musician> cq = cb.createQuery(Musician.class);
         Root<Musician> musician = cq.from(Musician.class);
@@ -99,23 +107,23 @@ public class MusicianService {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        if (request.getName() != null && !request.getName().isEmpty()) {
-            predicates.add(cb.like(musician.get("personalInformation").get("name"), "%" + request.getName() + "%"));
+        if (name != null && !name.isEmpty()) {
+            predicates.add(cb.like(musician.get("personalInformation").get("name"), "%" + name + "%"));
         }
-        if (request.getCity() != null && !request.getCity().isEmpty()) {
-            predicates.add(cb.like(musician.get("personalInformation").get("city"), "%" + request.getCity() + "%"));
+        if (city != null && !city.isEmpty()) {
+            predicates.add(cb.like(musician.get("personalInformation").get("city"), "%" + city + "%"));
         }
-        if(request.getCountry() != null && !request.getCountry().isEmpty()){
-            predicates.add(cb.like(musician.get("personalInformation").get("country"),"%" + request.getCountry() + "%"));
+        if(country != null && !country.isEmpty()){
+            predicates.add(cb.like(musician.get("personalInformation").get("country"),"%" + country + "%"));
         }
-        if (request.getGenres() != null && !request.getGenres().isEmpty()) {
-            predicates.add(genres.get("name").in(request.getGenres()));
+        if (musicianGenres != null && !musicianGenres.isEmpty()) {
+            predicates.add(genres.get("name").in(musicianGenres));
         }
-        if (request.getInstruments() != null && !request.getInstruments().isEmpty()) {
-            predicates.add(instruments.get("name").in(request.getInstruments()));
+        if (musicianInstruments != null && !musicianInstruments.isEmpty()) {
+            predicates.add(instruments.get("name").in(musicianInstruments));
         }
-        if (request.getExperience() != null && !request.getExperience().isEmpty()) {
-            predicates.add(cb.equal(skills.get("generalExperience"), Experience.valueOf(request.getExperience())));
+        if (experience != null && !experience.isEmpty()) {
+            predicates.add(cb.equal(skills.get("generalExperience"), Experience.valueOf(experience)));
         }
 
         cq.where(predicates.toArray(new Predicate[0]));
@@ -362,6 +370,8 @@ public class MusicianService {
 
             responseMusicianBands.add(bandDto);
         }
+
+        // TODO: Agregar bandas que es lider
 
         return ResponseEntity.ok(responseMusicianBands);
 

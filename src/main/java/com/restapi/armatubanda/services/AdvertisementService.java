@@ -1,15 +1,21 @@
 package com.restapi.armatubanda.services;
 
 
+import com.restapi.armatubanda.dto.AdvertisementFilterDto;
 import com.restapi.armatubanda.dto.AdvertisementRequestDto;
 import com.restapi.armatubanda.dto.AdvertisementResponseDto;
 import com.restapi.armatubanda.model.*;
 import com.restapi.armatubanda.repository.AdvertisementRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +29,8 @@ public class AdvertisementService {
     private final GenreService genreService;
 
     private final InstrumentService instrumentService;
+
+    private final EntityManager entityManager;
 
     public ResponseEntity<BandAdvertisement> createAd(Musician bandLeader, Band band, AdvertisementRequestDto advertisementRequestDto) throws Exception {
 
@@ -56,8 +64,32 @@ public class AdvertisementService {
         return HttpStatus.OK;
     }
 
-    public List<AdvertisementResponseDto> getAllAds() {
-        return convertAds(advertisementRepository.findAll());
+    public List<AdvertisementResponseDto> getAdList(List<String> instruments,List<String> genres) {
+
+
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<BandAdvertisement> cq = cb.createQuery(BandAdvertisement.class);
+        Root<BandAdvertisement> advertisementRoot = cq.from(BandAdvertisement.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        if(genres != null && !genres.isEmpty()){
+            //List<Genre> genreList = this.genreService.getGenreListString(genres);
+            predicates.add(advertisementRoot.get("genres").get("name").in(genres));
+        }
+
+        if(instruments != null && !instruments.isEmpty()){
+            //List<Instrument> instrumentList = this.instrumentService.getInstrumentListString(instruments);
+            predicates.add(advertisementRoot.get("instruments").get("name").in(instruments));
+        }
+
+        cq.where(predicates.toArray(new Predicate[0]));
+        TypedQuery<BandAdvertisement> query = entityManager.createQuery(cq);
+
+        List<BandAdvertisement> adList = query.getResultList();
+
+        return convertAds(adList);
     }
 
     public List<AdvertisementResponseDto> convertAds(List<BandAdvertisement> adList){
