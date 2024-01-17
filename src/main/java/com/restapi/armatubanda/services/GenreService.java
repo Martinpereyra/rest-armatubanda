@@ -64,4 +64,12 @@ public class GenreService {
 
         return responseList;
     }
+
+    public List<String> getGenreStringList(List<Genre> genres){
+        List<String> genreNames = new ArrayList<>();
+        for (Genre genre:genres){
+            genreNames.add(genre.getName());
+        }
+        return genreNames;
+    }
 }

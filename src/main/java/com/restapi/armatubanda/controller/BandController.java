@@ -50,16 +50,8 @@ public class BandController {
     }
 
     @GetMapping(value = "/{bandId}")
-    public BandCreationDto getBand(@PathVariable int bandId) {
-        Band band = this.bandService.getBandById(bandId);
-
-        return BandCreationDto.builder()
-                .bandContactInfo(band.getBandContactInfo())
-                .bandGenres(band.getGenres())
-                .bandInfo(band.getBandInfo())
-                .bandProfileImage(band.getImage())
-                .leaderName(band.getMusicianLeader().getPersonalInformation().getName())
-                .build();
+    public Band getBand(@PathVariable int bandId) {
+        return this.bandService.getBandById(bandId);
     }
 
     @DeleteMapping(value = "/delete/{bandId}")

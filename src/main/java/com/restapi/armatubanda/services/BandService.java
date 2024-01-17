@@ -32,7 +32,7 @@ public class BandService {
 
     public BandCreationDto createBand(BandCreationDto bandCreationDto, Musician bandLeader, MultipartFile file) throws IOException {
 
-        List<Genre> genreList = genreService.getGenreList(bandCreationDto.getBandGenres());
+        List<Genre> genreList = genreService.getGenreListString(bandCreationDto.getBandGenres());
         
         var bandToSave = Band.builder()
                 .bandInfo(bandCreationDto.getBandInfo())
@@ -64,7 +64,7 @@ public class BandService {
         }
 
         bandCreationDto.setBandProfileImage(band.getImage());
-        bandCreationDto.setBandGenres(band.getGenres());
+        bandCreationDto.setBandGenres(genreService.getGenreStringList(band.getGenres()));
 
         return bandCreationDto;
     }
@@ -137,7 +137,7 @@ public class BandService {
 
     private BandCreationDto createBandResponseDto(Band band) {
         return BandCreationDto.builder()
-                .bandGenres(band.getGenres())
+                .bandGenres(genreService.getGenreStringList(band.getGenres()))
                 .bandProfileImage(band.getImage())
                 .bandInfo(band.getBandInfo())
                 .bandContactInfo(band.getBandContactInfo())

@@ -25,6 +25,6 @@ public class BandCreationDto {
 
     private Image bandProfileImage;
 
-    private List<Genre> bandGenres;
+    private List<String> bandGenres;
 
 }
