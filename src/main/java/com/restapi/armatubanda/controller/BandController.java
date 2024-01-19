@@ -11,6 +11,7 @@ import com.restapi.armatubanda.services.BandService;
 import com.restapi.armatubanda.services.InvitationService;
 import com.restapi.armatubanda.services.MusicianService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,7 @@ public class BandController {
     private final MusicianService musicianService;
     private final BandService bandService;
     private final AuthenticationService authenticationService;
+
     private final InvitationService invitationService;
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})

@@ -111,9 +111,9 @@ public class MusicianController {
         return musicianService.getMusicianBands(musicianId);
     }
 
-    @GetMapping(value = "/{leaderId}/leader/bands")
-    public ResponseEntity<List<MusicianBandsDto>> getMusicianLeaderBands(@PathVariable("leaderId") int leaderId){
-        return musicianService.getMusicianLeaderBands(leaderId);
+    @GetMapping(value = "/{musicianId}/leader/bands")
+    public ResponseEntity<List<MusicianInvitationStatusDto>> getMusicianLeaderBands(@PathVariable("musicianId") int musicianId){
+        return musicianService.getMusicianLeaderBands(musicianId);
     }
 
 

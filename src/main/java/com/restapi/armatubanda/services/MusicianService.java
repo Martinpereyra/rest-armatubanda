@@ -3,6 +3,7 @@ package com.restapi.armatubanda.services;
 import com.restapi.armatubanda.dto.*;
 import com.restapi.armatubanda.model.*;
 import com.restapi.armatubanda.repository.BandRepository;
+import com.restapi.armatubanda.repository.InvitationRepository;
 import com.restapi.armatubanda.repository.MusicianRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
@@ -27,6 +28,9 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class MusicianService {
+
+    private final AuthenticationService authenticationService;
+
     private final MusicianRepository musicianRepository;
 
     private final InstrumentService instrumentService;
@@ -36,6 +40,8 @@ public class MusicianService {
     private final BandRepository bandRepository;
 
     private final EntityManager entityManager;
+
+    private final InvitationRepository invitationRepository;
 
 
     public Optional<Musician> getMusician(String username){
@@ -377,19 +383,34 @@ public class MusicianService {
 
     }
 
-    public ResponseEntity<List<MusicianBandsDto>> getMusicianLeaderBands(int musicianId){
+    public ResponseEntity<List<MusicianInvitationStatusDto>> getMusicianLeaderBands(int musicianId){
 
-        List<Band> musicianLeaderBands = bandRepository.findByMusicianLeaderId(musicianId);
-        List<MusicianBandsDto> musicianLeaderBandsDto = new ArrayList<>();
+        Musician musicianLogged = this.authenticationService.getMusicianLogged();
+        List<Band> musicianLeaderBands = bandRepository.findByMusicianLeaderId(musicianLogged.getId());
+
+        List<MusicianInvitationStatusDto> musicianLeaderBandsDto = new ArrayList<>();
 
         for (Band band : musicianLeaderBands){
+            String musicianBandStatus;
+
+            Optional<Invitation> optionalInvitation = this.invitationRepository.findByMusicianInvitedIdAndBandId(musicianId, band.getId());
+            if(optionalInvitation.isPresent()){
+                Invitation invitation = optionalInvitation.get();
+                if(invitation.isStatus()){
+                    musicianBandStatus = "MEMBER";
+                }else{
+                    musicianBandStatus = "PENDING";
+                }
+            }else{
+                musicianBandStatus = "NOT MEMBER";
+            }
+
             MusicianBandsDto bandDto = MusicianBandsDto.builder()
                     .bandId(band.getId())
                     .bandName(band.getBandInfo().getName())
                     .bandImage(band.getImage())
                     .build();
-
-            musicianLeaderBandsDto.add(bandDto);
+            musicianLeaderBandsDto.add(new MusicianInvitationStatusDto(bandDto,musicianBandStatus));
         }
 
         return ResponseEntity.ok(musicianLeaderBandsDto);

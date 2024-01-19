@@ -8,6 +8,7 @@ import com.restapi.armatubanda.model.Musician;
 import com.restapi.armatubanda.repository.BandRepository;
 import com.restapi.armatubanda.repository.InvitationRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -95,5 +97,19 @@ public class InvitationService {
     @Transactional
     public void deleteInvitation(int bandId,int musicianId){
         this.invitationRepository.deleteByBandIdAndMusicianId(bandId,musicianId);
+    }
+
+    public String getInvitationStatus(int bandId,int musicianId){
+       Optional<Invitation> optionalInvitation = this.invitationRepository.findByMusicianInvitedIdAndBandId(musicianId, bandId);
+       if(optionalInvitation.isPresent()){
+           Invitation invitation = optionalInvitation.get();
+           if(invitation.isStatus()){
+               return "MEMBER";
+           }else{
+               return "PENDING";
+           }
+       }else{
+           return "NOT MEMBER";
+       }
     }
 }
