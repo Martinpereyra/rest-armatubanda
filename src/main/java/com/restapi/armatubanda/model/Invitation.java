@@ -16,6 +16,9 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"musician_id", "band_id"})
+})
 public class Invitation {
 
     @Id
