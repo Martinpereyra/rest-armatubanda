@@ -15,6 +15,7 @@ import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -106,6 +107,11 @@ public class AdvertisementService {
             convertedList.add(convertedAd);
         }
         return convertedList;
+    }
+
+
+    public BandAdvertisement getAdvertisement(int idAd){
+        return this.advertisementRepository.findById(idAd).orElseThrow(()-> new UsernameNotFoundException("Advertisement didnt found"));
     }
 
 }

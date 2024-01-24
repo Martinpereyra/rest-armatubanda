@@ -14,6 +14,9 @@ import java.time.Instant;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"advertisement_id", "musician_id"})
+})
 public class MusicianApplication {
 
     @Id
@@ -27,6 +30,8 @@ public class MusicianApplication {
     @ManyToOne
     @JoinColumn(name = "musician_id")
     private Musician musician;
+
+    private String message;
 
     @CreationTimestamp
     private Instant createdOn;
