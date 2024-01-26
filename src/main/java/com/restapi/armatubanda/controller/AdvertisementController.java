@@ -55,4 +55,6 @@ public class AdvertisementController {
             @RequestParam(value = "genres",required = false) List<String> genres) {
         return advertisementService.getAdList(instruments,genres);
     }
+
+    // TODO: Devolver todos los ads de una banda
 }

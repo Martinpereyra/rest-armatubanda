@@ -144,4 +144,16 @@ public class BandService {
                 .leaderName(band.getMusicianLeader().getPersonalInformation().getName())
                 .build();
     }
+
+    public boolean addMember(Musician musician, Band band){
+        try{
+        List<Musician> updateMembersList = band.getMembers();
+        updateMembersList.add(musician);
+        band.setMembers(updateMembersList);
+        this.bandRepository.save(band);
+        return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
 }

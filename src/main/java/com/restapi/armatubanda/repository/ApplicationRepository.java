@@ -10,6 +10,6 @@ import java.util.List;
 public interface ApplicationRepository extends JpaRepository<MusicianApplication,Integer> {
 
 
-    @Query("SELECT a FROM MusicianApplication a WHERE a.bandAdvertisement.band.id = :bandId")
-    List<MusicianApplication> findAllByBand(@Param("bandId") int bandId);
+    @Query("SELECT a FROM MusicianApplication a WHERE a.bandAdvertisement.id = :adId")
+    List<MusicianApplication> findAllByAd(@Param("adId") int adId);
 }

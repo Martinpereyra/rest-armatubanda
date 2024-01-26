@@ -25,10 +25,18 @@ public class ApplicationController {
     }
 
     @GetMapping
-    public List<ApplicationResponseDto> getApplicationsByBand(
-            @RequestParam("bandId") int bandId
+    public List<ApplicationResponseDto> getApplicationsByAd(
+            @RequestParam("adId") int adId
     ){
-        return this.applicationService.getApplicationsByBand(bandId);
+        return this.applicationService.getApplicationsByBand(adId);
+    }
+
+    @PutMapping(value = "/status")
+    public HttpStatus changeStatus(@RequestParam("applicationId") int applicationId,
+                                   @RequestParam("status") boolean status){
+
+        this.applicationService.acceptApplication(applicationId,status);
+        return HttpStatus.OK;
     }
 
 

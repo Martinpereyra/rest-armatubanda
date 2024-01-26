@@ -3,12 +3,14 @@ package com.restapi.armatubanda.services;
 
 import com.restapi.armatubanda.dto.ApplicationRequestDto;
 import com.restapi.armatubanda.dto.ApplicationResponseDto;
+import com.restapi.armatubanda.model.Band;
 import com.restapi.armatubanda.model.BandAdvertisement;
 import com.restapi.armatubanda.model.Musician;
 import com.restapi.armatubanda.model.MusicianApplication;
 import com.restapi.armatubanda.repository.ApplicationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,9 +23,14 @@ public class ApplicationService {
     private final ApplicationRepository applicationRepository;
     private final AdvertisementService advertisementService;
     private final AuthenticationService authenticationService;
+    private final BandService bandService;
     public HttpStatus createApplication(ApplicationRequestDto applicationRequestDto) {
         Musician musician = this.authenticationService.getMusicianLogged();
         BandAdvertisement bandAdvertisement = this.advertisementService.getAdvertisement(applicationRequestDto.getIdApplication());
+
+        if(bandAdvertisement.getBand().getMembers().contains(musician)){
+            throw new RuntimeException();
+        }
 
         MusicianApplication musicianApplication = MusicianApplication.builder()
                 .musician(musician)
@@ -37,9 +44,15 @@ public class ApplicationService {
 
     }
 
-    public List<ApplicationResponseDto> getApplicationsByBand(int bandId) {
-        List<MusicianApplication> applicationList = this.applicationRepository.findAllByBand(bandId);
+    public List<ApplicationResponseDto> getApplicationsByBand(int adId) {
+        Musician musicianLogged = this.authenticationService.getMusicianLogged();
+        BandAdvertisement ad = this.advertisementService.getAdvertisement(adId);
+        if (ad.getBand().getMusicianLeader().getId() != musicianLogged.getId()){
+            throw new RuntimeException();
+        }
+        List<MusicianApplication> applicationList = this.applicationRepository.findAllByAd(adId);
         return this.convertApplicationDto(applicationList);
+
     }
 
 
@@ -58,5 +71,27 @@ public class ApplicationService {
             responseList.add(appResponse);
         }
         return responseList;
+    }
+
+    public HttpStatus acceptApplication(int applicationId, boolean status) {
+        MusicianApplication musicianApplication = this.applicationRepository.findById(applicationId).orElseThrow(()-> new UsernameNotFoundException("Application not found"));
+        Musician musicianLogged = this.authenticationService.getMusicianLogged();
+        Band band = musicianApplication.getBandAdvertisement().getBand();
+        if (musicianLogged.getId() != band.getMusicianLeader().getId()){
+            throw new RuntimeException();
+        }
+        if(status){
+            Musician musician = musicianApplication.getMusician();
+            if(this.bandService.addMember(musician,band)){
+                this.applicationRepository.delete(musicianApplication);
+                return HttpStatus.OK;
+            }else {
+                throw new RuntimeException();
+            }
+        }else{
+            this.applicationRepository.delete(musicianApplication);
+            return HttpStatus.ACCEPTED;
+        }
+
     }
 }

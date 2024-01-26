@@ -53,6 +53,8 @@ public class BandController {
 
     @GetMapping(value = "/{bandId}")
     public Band getBand(@PathVariable int bandId) {
+
+        // TODO: Dividir en dos metodos, uno accesible desde un endpoint que devuelva un DTO de banda y otro metodo en el service que devuelva entidad Band
         return this.bandService.getBandById(bandId);
     }
 
