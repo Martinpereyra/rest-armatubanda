@@ -17,6 +17,8 @@ import java.util.List;
 @AllArgsConstructor
 public class AdvertisementResponseDto {
 
+    public int adId;
+
     public String description;
 
     public int bandId;

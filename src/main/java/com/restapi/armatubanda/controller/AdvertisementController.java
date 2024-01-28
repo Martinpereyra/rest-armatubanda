@@ -56,5 +56,12 @@ public class AdvertisementController {
         return advertisementService.getAdList(instruments,genres);
     }
 
-    // TODO: Devolver todos los ads de una banda
+
+    @GetMapping("/{bandId}")
+    public List<AdvertisementResponseDto> getAdBandList(@PathVariable("bandId") int bandId){
+        return advertisementService.getAdBandList(bandId);
+    }
+
+    // TODO: Checkear si al borrar un ad tambien se borran las applications (cascade)
+
 }

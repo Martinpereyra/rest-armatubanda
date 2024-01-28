@@ -102,6 +102,7 @@ public class BandController {
     }
 
 
+    // TODO: Agregar el ID de banda
     @GetMapping()
     public ResponseEntity<List<BandCreationDto>> getBandList(
             @RequestParam(value = "name",required = false) String name,
@@ -111,4 +112,9 @@ public class BandController {
     ){
         return bandService.getBandList(name,country,city,genres);
     }
+
+    // TODO: Devolver bandas que el musico es lider
+
+
+
 }

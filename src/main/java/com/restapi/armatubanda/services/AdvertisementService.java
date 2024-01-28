@@ -56,6 +56,7 @@ public class AdvertisementService {
     }
 
     public HttpStatus deleteAd(Musician bandLeader, int adId) throws Exception {
+        
         BandAdvertisement bandAdvertisement = advertisementRepository.findById(adId).orElseThrow(()-> new Exception());
 
         if (bandLeader.getId() != bandAdvertisement.getBand().getMusicianLeader().getId()){
@@ -97,6 +98,7 @@ public class AdvertisementService {
         List<AdvertisementResponseDto> convertedList = new ArrayList<>();
         for(BandAdvertisement ad : adList){
             AdvertisementResponseDto convertedAd = AdvertisementResponseDto.builder()
+                    .adId(ad.getId())
                     .bandId(ad.getBand().getId())
                     .bandImage(ad.getBand().getImage())
                     .description(ad.getDescription())
@@ -114,4 +116,8 @@ public class AdvertisementService {
         return this.advertisementRepository.findById(idAd).orElseThrow(()-> new UsernameNotFoundException("Advertisement didnt found"));
     }
 
+    public List<AdvertisementResponseDto> getAdBandList(int bandId) {
+        List<BandAdvertisement> bandAdvertisementList = this.advertisementRepository.findAllByBandId(bandId);
+        return convertAds(bandAdvertisementList);
+    }
 }

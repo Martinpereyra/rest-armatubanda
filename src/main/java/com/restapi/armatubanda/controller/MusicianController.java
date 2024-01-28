@@ -106,6 +106,7 @@ public class MusicianController {
     }
 
 
+    // TODO: Mover el metodo getMusicianBands Y getMusicianLeaderBands a BandController
     @GetMapping(value = "/{musicianId}/bands")
     public ResponseEntity<List<MusicianBandsDto>> getMusicianBands(@PathVariable("musicianId") int musicianId){
         return musicianService.getMusicianBands(musicianId);
@@ -115,6 +116,12 @@ public class MusicianController {
     public ResponseEntity<List<MusicianInvitationStatusDto>> getMusicianLeaderBands(@PathVariable("musicianId") int musicianId){
         return musicianService.getMusicianLeaderBands(musicianId);
     }
+
+    // TODO: Dejar de ser miembro de una banda
+
+    // TODO: Editar perfil del musico
+
+
 
 
 }
