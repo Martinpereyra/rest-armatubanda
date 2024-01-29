@@ -366,6 +366,11 @@ public class MusicianService {
 
         List<MusicianBandsDto> responseMusicianBands = new ArrayList<>();
 
+        List<Band> musicianLeaderBands = bandRepository.findByMusicianLeaderId(musicianId);
+
+        musicianBands.addAll(musicianLeaderBands);
+
+
         for(Band band : musicianBands){
 
             MusicianBandsDto bandDto = MusicianBandsDto.builder()
@@ -377,7 +382,6 @@ public class MusicianService {
             responseMusicianBands.add(bandDto);
         }
 
-        // TODO: Agregar bandas que es lider
 
         return ResponseEntity.ok(responseMusicianBands);
 
