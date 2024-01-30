@@ -2,6 +2,7 @@ package com.restapi.armatubanda.services;
 
 
 import com.restapi.armatubanda.dto.BandCreationDto;
+import com.restapi.armatubanda.dto.BandMembersDto;
 import com.restapi.armatubanda.dto.BandRequestDto;
 import com.restapi.armatubanda.model.*;
 import com.restapi.armatubanda.repository.BandRepository;
@@ -55,18 +56,49 @@ public class BandService {
     private BandCreationDto convertToBandCreationDto(Band band) {
         BandCreationDto bandCreationDto = new BandCreationDto();
 
+        bandCreationDto.setBandId(band.getId());
         bandCreationDto.setBandInfo(band.getBandInfo());
         bandCreationDto.setBandContactInfo(band.getBandContactInfo());
-
         if (band.getMusicianLeader() != null && band.getMusicianLeader().getPersonalInformation() != null) {
-            String leaderName = band.getMusicianLeader().getPersonalInformation().getName();
-            bandCreationDto.setLeaderName(leaderName);
+            BandMembersDto leader = BandMembersDto.builder()
+                    .musicianId(band.getMusicianLeader().getId())
+                    .musicianName(band.getMusicianLeader().getPersonalInformation().getName())
+                    .musicianLastName(band.getMusicianLeader().getPersonalInformation().getLastname())
+                    .musicianProfileImage(band.getMusicianLeader().getImage())
+                    .build();
+            bandCreationDto.setLeader(leader);
         }
-
         bandCreationDto.setBandProfileImage(band.getImage());
         bandCreationDto.setBandGenres(genreService.getGenreStringList(band.getGenres()));
-
+        if(band.getBandPosts() != null){
+        bandCreationDto.setPostList(band.getBandPosts());
+        }
+        if(band.getMembers() != null){
+        bandCreationDto.setBandMembersList(convertToBandMembersDtoList(band.getMembers()));
+        }
+        if(band.getBandReviews() != null){
+            bandCreationDto.setReviewsList(band.getBandReviews());
+        }
         return bandCreationDto;
+    }
+
+    public BandMembersDto convertToBandMembersDto(Musician member){
+        return BandMembersDto.builder()
+                .musicianId(member.getId())
+                .musicianName(member.getPersonalInformation().getName())
+                .musicianLastName(member.getPersonalInformation().getLastname())
+                .musicianProfileImage(member.getImage())
+                .build();
+    }
+
+    public List<BandMembersDto> convertToBandMembersDtoList(List<Musician> members){
+        List<BandMembersDto> membersDtoList = new ArrayList<>();
+
+        for(Musician musician : members){
+            BandMembersDto musicianDto = convertToBandMembersDto(musician);
+            membersDtoList.add(musicianDto);
+        }
+        return membersDtoList;
     }
 
     public Image uploadProfileImage(MultipartFile file) throws IOException {
@@ -136,12 +168,14 @@ public class BandService {
     }
 
     private BandCreationDto createBandResponseDto(Band band) {
+
+
         return BandCreationDto.builder()
                 .bandGenres(genreService.getGenreStringList(band.getGenres()))
                 .bandProfileImage(band.getImage())
                 .bandInfo(band.getBandInfo())
                 .bandContactInfo(band.getBandContactInfo())
-                .leaderName(band.getMusicianLeader().getPersonalInformation().getName())
+                .leader(convertToBandMembersDto(band.getMusicianLeader()))
                 .build();
     }
 

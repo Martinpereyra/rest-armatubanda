@@ -54,5 +54,11 @@ public class Band {
     @OneToMany
     private List<Musician> members;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Post> bandPosts;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Review> bandReviews;
+
 
 }
