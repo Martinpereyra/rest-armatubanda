@@ -17,14 +17,23 @@ import java.util.List;
 @AllArgsConstructor
 public class BandCreationDto {
 
-    private BandInfo bandInfo;
 
-    private ContactInformation bandContactInfo;
+    public BandInfo bandInfo;
 
-    private String leaderName;
+    public ContactInformation bandContactInfo;
 
-    private Image bandProfileImage;
+    public int leaderId;
 
-    private List<String> bandGenres;
+    public String leaderName;
+
+    public String leaderLastname;
+
+    public Image leaderProfileImage;
+
+    public Image bandProfileImage;
+
+    public List<String> bandGenres;
+
+    // TODO: Agregar lista de posts y reviews, bandId, lista de miembros con su id,foto
 
 }

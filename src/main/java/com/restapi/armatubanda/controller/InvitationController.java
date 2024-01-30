@@ -71,6 +71,8 @@ public class InvitationController {
         return this.invitationService.getMusicianPendingInvitations(musician.getId());
     }
 
+
+    // TODO: Eliminar endpoint
     @GetMapping(value="/musician/accepted")
     public List<Invitation> getMusicianAcceptedInvitations(){
         var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();

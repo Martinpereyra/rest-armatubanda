@@ -156,4 +156,9 @@ public class BandService {
             return false;
         }
     }
+
+    public BandCreationDto getBand(int bandId) {
+        Band band = this.bandRepository.findById(bandId).orElseThrow(() -> new UsernameNotFoundException("Band not found"));
+        return convertToBandCreationDto(band);
+    }
 }

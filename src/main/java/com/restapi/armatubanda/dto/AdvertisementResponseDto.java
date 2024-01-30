@@ -19,6 +19,8 @@ public class AdvertisementResponseDto {
 
     public int adId;
 
+    public String adName;
+
     public String description;
 
     public int bandId;

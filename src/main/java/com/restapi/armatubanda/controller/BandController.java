@@ -52,10 +52,8 @@ public class BandController {
     }
 
     @GetMapping(value = "/{bandId}")
-    public Band getBand(@PathVariable int bandId) {
-
-        // TODO: Dividir en dos metodos, uno accesible desde un endpoint que devuelva un DTO de banda y otro metodo en el service que devuelva entidad Band
-        return this.bandService.getBandById(bandId);
+    public BandCreationDto getBand(@PathVariable int bandId) {
+        return this.bandService.getBand(bandId);
     }
 
     @DeleteMapping(value = "/delete/{bandId}")
@@ -113,8 +111,16 @@ public class BandController {
         return bandService.getBandList(name,country,city,genres);
     }
 
-    // TODO: Devolver bandas que el musico es lider
+    // TODO: Editar perfil de banda
 
+    // TODO: Crear post
 
+    // TODO: Devolver lista de posts
+
+    // TODO: Crear reviews
+
+    // TODO: Devolver lista de reviews (GETPost)
+
+    // TODO: Devolver lista de miembros de la banda
 
 }

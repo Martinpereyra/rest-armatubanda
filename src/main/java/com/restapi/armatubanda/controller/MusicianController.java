@@ -42,8 +42,6 @@ public class MusicianController {
         return musicianService.getMusiciansList(name,city,country,genres,instruments,experience,lookingBand);
     }
 
-    // TODO: Update musician profile info PUT METHOD
-
 
     @PutMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<MusicianResponseDto> createProfileAlt(@RequestPart(value = "profileInfoDto") ProfileCreationDto profileInfoDto,
@@ -106,7 +104,6 @@ public class MusicianController {
     }
 
 
-    // TODO: Mover el metodo getMusicianBands Y getMusicianLeaderBands a BandController
     @GetMapping(value = "/{musicianId}/bands")
     public ResponseEntity<List<MusicianBandsDto>> getMusicianBands(@PathVariable("musicianId") int musicianId){
         return musicianService.getMusicianBands(musicianId);
