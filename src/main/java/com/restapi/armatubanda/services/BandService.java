@@ -59,8 +59,14 @@ public class BandService {
         bandCreationDto.setBandContactInfo(band.getBandContactInfo());
 
         if (band.getMusicianLeader() != null && band.getMusicianLeader().getPersonalInformation() != null) {
+            int leaderId = band.getMusicianLeader().getId();
             String leaderName = band.getMusicianLeader().getPersonalInformation().getName();
+            String leaderLastName = band.getMusicianLeader().getPersonalInformation().getLastname();
+            Image leaderProfileImage = band.getMusicianLeader().getImage();
+            bandCreationDto.setLeaderId(leaderId);
             bandCreationDto.setLeaderName(leaderName);
+            bandCreationDto.setLeaderLastname(leaderLastName);
+            bandCreationDto.setLeaderProfileImage(leaderProfileImage);
         }
 
         bandCreationDto.setBandProfileImage(band.getImage());
