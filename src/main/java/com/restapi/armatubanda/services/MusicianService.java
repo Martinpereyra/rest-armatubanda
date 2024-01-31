@@ -11,6 +11,7 @@ import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -418,6 +419,26 @@ public class MusicianService {
         }
 
         return ResponseEntity.ok(musicianLeaderBandsDto);
+
+
+    }
+
+    public HttpStatus leaveBand(int bandId) throws Exception {
+        Musician musician = this.authenticationService.getMusicianLogged();
+        Band band = this.bandRepository.findById(bandId).orElseThrow(()-> new UsernameNotFoundException("Band not found"));
+
+        if(band.getMusicianLeader().getId() == musician.getId()){
+            throw new Exception();
+        }
+
+        if(band.getMembers().contains(musician)){
+            List <Musician> currentMembers = band.getMembers();
+            currentMembers.remove(musician);
+            band.setMembers(currentMembers);
+            this.bandRepository.save(band);
+            return HttpStatus.OK;
+        }
+        return HttpStatus.INTERNAL_SERVER_ERROR;
 
 
     }

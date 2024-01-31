@@ -115,6 +115,13 @@ public class MusicianController {
     }
 
     // TODO: Dejar de ser miembro de una banda
+    @DeleteMapping(value = "/leave")
+    public HttpStatus leaveBand(
+            @RequestParam("bandId") int bandId
+    ) throws Exception {
+        return musicianService.leaveBand(bandId);
+    }
+
 
     // TODO: Editar perfil del musico
 

@@ -29,6 +29,8 @@ public class InvitationController {
     private final InvitationService invitationService;
     private final AuthenticationService authenticationService;
 
+    // TODO: Refactorizar logica
+
     @PostMapping(value="/invite")
     public ResponseEntity<Invitation> inviteMusician(@RequestBody InvitationRequestDto invitationRequestDto) throws Exception {
         var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
