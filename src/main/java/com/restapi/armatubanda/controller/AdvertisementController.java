@@ -2,6 +2,7 @@ package com.restapi.armatubanda.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.restapi.armatubanda.dto.AdListResponseDto;
 import com.restapi.armatubanda.dto.AdvertisementFilterDto;
 import com.restapi.armatubanda.dto.AdvertisementRequestDto;
 import com.restapi.armatubanda.dto.AdvertisementResponseDto;
@@ -50,7 +51,7 @@ public class AdvertisementController {
     }
 
     @GetMapping()
-    public List<AdvertisementResponseDto> getAdList(
+    public List<AdListResponseDto> getAdList(
             @RequestParam(value = "instruments",required = false) List<String> instruments,
             @RequestParam(value = "genres",required = false) List<String> genres) {
         return advertisementService.getAdList(instruments,genres);

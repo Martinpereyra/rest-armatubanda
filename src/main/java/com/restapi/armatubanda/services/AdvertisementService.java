@@ -1,11 +1,13 @@
 package com.restapi.armatubanda.services;
 
 
+import com.restapi.armatubanda.dto.AdListResponseDto;
 import com.restapi.armatubanda.dto.AdvertisementFilterDto;
 import com.restapi.armatubanda.dto.AdvertisementRequestDto;
 import com.restapi.armatubanda.dto.AdvertisementResponseDto;
 import com.restapi.armatubanda.model.*;
 import com.restapi.armatubanda.repository.AdvertisementRepository;
+import com.restapi.armatubanda.repository.ApplicationRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -13,6 +15,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,6 +23,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +38,12 @@ public class AdvertisementService {
 
     private final EntityManager entityManager;
 
+    private final AuthenticationService authenticationService;
+
+    private final InvitationService invitationService;
+
+    private final ApplicationRepository applicationRepository;
+
     public ResponseEntity<BandAdvertisement> createAd(Musician bandLeader, Band band, AdvertisementRequestDto advertisementRequestDto) throws Exception {
 
         try{
@@ -45,6 +56,7 @@ public class AdvertisementService {
 
             BandAdvertisement ad = BandAdvertisement.builder()
                     .band(band)
+                    .name(advertisementRequestDto.getName())
                     .description(advertisementRequestDto.getDescription())
                     .genres(genreList)
                     .instruments(instrumentList)
@@ -66,9 +78,10 @@ public class AdvertisementService {
         return HttpStatus.OK;
     }
 
-    public List<AdvertisementResponseDto> getAdList(List<String> instruments,List<String> genres) {
+    public List<AdListResponseDto> getAdList(List<String> instruments,List<String> genres) {
 
-
+        Musician musicianLogged = this.authenticationService.getMusicianLogged();
+        int musicianLoggedId = musicianLogged.getId();
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<BandAdvertisement> cq = cb.createQuery(BandAdvertisement.class);
@@ -77,12 +90,10 @@ public class AdvertisementService {
         List<Predicate> predicates = new ArrayList<>();
 
         if(genres != null && !genres.isEmpty()){
-            //List<Genre> genreList = this.genreService.getGenreListString(genres);
             predicates.add(advertisementRoot.get("genres").get("name").in(genres));
         }
 
         if(instruments != null && !instruments.isEmpty()){
-            //List<Instrument> instrumentList = this.instrumentService.getInstrumentListString(instruments);
             predicates.add(advertisementRoot.get("instruments").get("name").in(instruments));
         }
 
@@ -91,7 +102,49 @@ public class AdvertisementService {
 
         List<BandAdvertisement> adList = query.getResultList();
 
-        return convertAds(adList);
+        List<AdvertisementResponseDto> adListDto = convertAds(adList);
+
+        List<AdListResponseDto> adListResponseDto = new ArrayList<>();
+
+        for(AdvertisementResponseDto ad : adListDto){
+            int bandId = ad.getBandId();
+            int adId = ad.getAdId();
+
+            String invitationStatus = this.invitationService.getInvitationStatus(bandId,musicianLoggedId);
+
+            if(Objects.equals(invitationStatus, "MEMBER")){
+                AdListResponseDto adToStore = AdListResponseDto.builder()
+                        .adResponse(ad)
+                        .status("MEMBER")
+                        .build();
+                adListResponseDto.add(adToStore);
+            }
+            else{
+                if(Objects.equals(invitationStatus,"PENDING")){
+                    AdListResponseDto adToStore = AdListResponseDto.builder()
+                            .adResponse(ad)
+                            .status("INVITED")
+                            .build();
+                    adListResponseDto.add(adToStore);
+                }else{
+                    if(this.applicationRepository.existsByMusicianIdAndAdvertisementId(musicianLoggedId,adId)){
+                        AdListResponseDto adToStore = AdListResponseDto.builder()
+                                .adResponse(ad)
+                                .status("PENDING")
+                                .build();
+                        adListResponseDto.add(adToStore);
+                    }else {
+                        AdListResponseDto adToStore = AdListResponseDto.builder()
+                                .adResponse(ad)
+                                .status("ELIGIBLE")
+                                .build();
+                        adListResponseDto.add(adToStore);
+                    }
+                }
+            }
+        }
+
+        return adListResponseDto;
     }
 
     public List<AdvertisementResponseDto> convertAds(List<BandAdvertisement> adList){
@@ -99,6 +152,7 @@ public class AdvertisementService {
         for(BandAdvertisement ad : adList){
             AdvertisementResponseDto convertedAd = AdvertisementResponseDto.builder()
                     .adId(ad.getId())
+                    .adName(ad.getName())
                     .bandId(ad.getBand().getId())
                     .bandImage(ad.getBand().getImage())
                     .description(ad.getDescription())
@@ -110,7 +164,6 @@ public class AdvertisementService {
         }
         return convertedList;
     }
-
 
     public BandAdvertisement getAdvertisement(int idAd){
         return this.advertisementRepository.findById(idAd).orElseThrow(()-> new UsernameNotFoundException("Advertisement didnt found"));

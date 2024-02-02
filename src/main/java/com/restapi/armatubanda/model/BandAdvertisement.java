@@ -23,7 +23,7 @@ public class BandAdvertisement {
 
     private String description;
 
-    // TODO: Agregar nombre de aviso (15 char)
+    private String name;
 
     @ManyToOne
     @JoinColumn(name = "band_id")

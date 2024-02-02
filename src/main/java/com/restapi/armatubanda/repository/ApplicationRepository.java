@@ -12,4 +12,8 @@ public interface ApplicationRepository extends JpaRepository<MusicianApplication
 
     @Query("SELECT a FROM MusicianApplication a WHERE a.bandAdvertisement.id = :adId")
     List<MusicianApplication> findAllByAd(@Param("adId") int adId);
+
+    @Query("SELECT COUNT(a) > 0 FROM MusicianApplication a WHERE a.musician.id = :musicianId AND a.bandAdvertisement.id = :adId")
+    boolean existsByMusicianIdAndAdvertisementId(@Param("musicianId") int musicianId, @Param("adId") int adId);
+
 }

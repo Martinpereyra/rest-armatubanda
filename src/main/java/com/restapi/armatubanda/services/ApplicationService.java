@@ -9,6 +9,7 @@ import com.restapi.armatubanda.model.Musician;
 import com.restapi.armatubanda.model.MusicianApplication;
 import com.restapi.armatubanda.repository.ApplicationRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -92,6 +93,9 @@ public class ApplicationService {
             this.applicationRepository.delete(musicianApplication);
             return HttpStatus.ACCEPTED;
         }
+    }
 
+    public boolean applicationExists(int musicianId,int adId){
+        return this.applicationRepository.existsByMusicianIdAndAdvertisementId(musicianId,adId);
     }
 }

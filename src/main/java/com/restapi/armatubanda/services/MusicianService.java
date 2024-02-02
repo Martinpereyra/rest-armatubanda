@@ -398,6 +398,7 @@ public class MusicianService {
         for (Band band : musicianLeaderBands){
             String musicianBandStatus;
 
+            // TODO: Reemplazar esto por el metodo creado en InvitationService y testearlo
             Optional<Invitation> optionalInvitation = this.invitationRepository.findByMusicianInvitedIdAndBandId(musicianId, band.getId());
             if(optionalInvitation.isPresent()){
                 Invitation invitation = optionalInvitation.get();

@@ -18,6 +18,8 @@ public class AdvertisementRequestDto {
 
     public String description;
 
+    public String name;
+
     public int bandId;
 
     public List<Genre> genres;
