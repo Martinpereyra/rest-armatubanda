@@ -78,7 +78,7 @@ public class AdvertisementService {
         return HttpStatus.OK;
     }
 
-    public List<AdListResponseDto> getAdList(List<String> instruments,List<String> genres) {
+    public List<AdvertisementResponseDto> getAdList(List<String> instruments,List<String> genres) {
 
         Musician musicianLogged = this.authenticationService.getMusicianLogged();
         int musicianLoggedId = musicianLogged.getId();
@@ -104,7 +104,7 @@ public class AdvertisementService {
 
         List<AdvertisementResponseDto> adListDto = convertAds(adList);
 
-        List<AdListResponseDto> adListResponseDto = new ArrayList<>();
+        List<AdvertisementResponseDto> adListResponseDto = new ArrayList<>();
 
         for(AdvertisementResponseDto ad : adListDto){
             int bandId = ad.getBandId();
@@ -113,32 +113,20 @@ public class AdvertisementService {
             String invitationStatus = this.invitationService.getInvitationStatus(bandId,musicianLoggedId);
 
             if(Objects.equals(invitationStatus, "MEMBER")){
-                AdListResponseDto adToStore = AdListResponseDto.builder()
-                        .adResponse(ad)
-                        .status("MEMBER")
-                        .build();
-                adListResponseDto.add(adToStore);
+                ad.setStatus("MEMBER");
+                adListResponseDto.add(ad);
             }
             else{
                 if(Objects.equals(invitationStatus,"PENDING")){
-                    AdListResponseDto adToStore = AdListResponseDto.builder()
-                            .adResponse(ad)
-                            .status("INVITED")
-                            .build();
-                    adListResponseDto.add(adToStore);
+                    ad.setStatus("INVITED");
+                    adListResponseDto.add(ad);
                 }else{
                     if(this.applicationRepository.existsByMusicianIdAndAdvertisementId(musicianLoggedId,adId)){
-                        AdListResponseDto adToStore = AdListResponseDto.builder()
-                                .adResponse(ad)
-                                .status("PENDING")
-                                .build();
-                        adListResponseDto.add(adToStore);
+                        ad.setStatus("PENDING");
+                        adListResponseDto.add(ad);
                     }else {
-                        AdListResponseDto adToStore = AdListResponseDto.builder()
-                                .adResponse(ad)
-                                .status("ELIGIBLE")
-                                .build();
-                        adListResponseDto.add(adToStore);
+                        ad.setStatus("ELIGIBLE");
+                        adListResponseDto.add(ad);
                     }
                 }
             }

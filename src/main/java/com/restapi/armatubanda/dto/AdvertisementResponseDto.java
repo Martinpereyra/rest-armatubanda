@@ -30,4 +30,6 @@ public class AdvertisementResponseDto {
     public List<Instrument> instruments;
 
     public Image bandImage;
+
+    public String status;
 }

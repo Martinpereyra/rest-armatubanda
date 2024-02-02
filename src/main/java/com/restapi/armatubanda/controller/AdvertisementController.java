@@ -51,7 +51,7 @@ public class AdvertisementController {
     }
 
     @GetMapping()
-    public List<AdListResponseDto> getAdList(
+    public List<AdvertisementResponseDto> getAdList(
             @RequestParam(value = "instruments",required = false) List<String> instruments,
             @RequestParam(value = "genres",required = false) List<String> genres) {
         return advertisementService.getAdList(instruments,genres);
