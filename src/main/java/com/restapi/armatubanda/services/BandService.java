@@ -171,6 +171,7 @@ public class BandService {
 
 
         return BandCreationDto.builder()
+                .bandId(band.getId())
                 .bandGenres(genreService.getGenreStringList(band.getGenres()))
                 .bandProfileImage(band.getImage())
                 .bandInfo(band.getBandInfo())

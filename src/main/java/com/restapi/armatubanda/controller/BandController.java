@@ -100,7 +100,6 @@ public class BandController {
     }
 
 
-    // TODO: Agregar el ID de banda
     @GetMapping()
     public ResponseEntity<List<BandCreationDto>> getBandList(
             @RequestParam(value = "name",required = false) String name,
