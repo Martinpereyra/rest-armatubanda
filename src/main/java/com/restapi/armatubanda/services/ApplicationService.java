@@ -35,7 +35,7 @@ public class ApplicationService {
 
         MusicianApplication musicianApplication = MusicianApplication.builder()
                 .musician(musician)
-                .bandAdvertisement(bandAdvertisement)
+                .advertisement(bandAdvertisement)
                 .accepted(false)
                 .message(applicationRequestDto.getMessage())
                 .build();
@@ -77,7 +77,7 @@ public class ApplicationService {
     public HttpStatus acceptApplication(int applicationId, boolean status) {
         MusicianApplication musicianApplication = this.applicationRepository.findById(applicationId).orElseThrow(()-> new UsernameNotFoundException("Application not found"));
         Musician musicianLogged = this.authenticationService.getMusicianLogged();
-        Band band = musicianApplication.getBandAdvertisement().getBand();
+        Band band = musicianApplication.getAdvertisement().getBand();
         if (musicianLogged.getId() != band.getMusicianLeader().getId()){
             throw new RuntimeException();
         }

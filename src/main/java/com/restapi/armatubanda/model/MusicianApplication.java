@@ -23,9 +23,9 @@ public class MusicianApplication {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "advertisement_id")
-    private BandAdvertisement bandAdvertisement;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "advertisement_id", nullable = false)
+    private BandAdvertisement advertisement;
 
     @ManyToOne
     @JoinColumn(name = "musician_id")

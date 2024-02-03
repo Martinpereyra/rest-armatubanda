@@ -37,4 +37,7 @@ public class BandAdvertisement {
 
     @CreationTimestamp
     private Instant createdOn;
+
+    @OneToMany(mappedBy = "advertisement", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MusicianApplication> applications;
 }

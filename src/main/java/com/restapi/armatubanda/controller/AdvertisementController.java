@@ -63,6 +63,4 @@ public class AdvertisementController {
         return advertisementService.getAdBandList(bandId);
     }
 
-    // TODO: Checkear si al borrar un ad tambien se borran las applications (cascade)
-
 }

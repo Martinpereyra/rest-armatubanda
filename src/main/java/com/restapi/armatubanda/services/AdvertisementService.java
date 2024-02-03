@@ -78,6 +78,7 @@ public class AdvertisementService {
         return HttpStatus.OK;
     }
 
+    // TODO: Agregar filtro, cuando el musico es lider de la banda lo muestra como "ELIGIBLE"
     public List<AdvertisementResponseDto> getAdList(List<String> instruments,List<String> genres) {
 
         Musician musicianLogged = this.authenticationService.getMusicianLogged();
