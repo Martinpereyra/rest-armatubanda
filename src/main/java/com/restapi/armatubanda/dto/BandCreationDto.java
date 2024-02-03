@@ -32,6 +32,4 @@ public class BandCreationDto {
 
     public List<BandMembersDto> bandMembersList;
 
-    // TODO: Agregar lista de posts y reviews, bandId, lista de miembros con su id,foto
-
 }
