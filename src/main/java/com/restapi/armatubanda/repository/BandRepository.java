@@ -13,4 +13,6 @@ public interface BandRepository extends JpaRepository<Band,Integer> {
     List<Band> findAlLByMembers_Id(int musicianId);
 
     List<Band> findByMusicianLeaderId(int leaderId);
+
+
 }

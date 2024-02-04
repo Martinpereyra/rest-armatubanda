@@ -8,6 +8,7 @@ import com.restapi.armatubanda.dto.AdvertisementResponseDto;
 import com.restapi.armatubanda.model.*;
 import com.restapi.armatubanda.repository.AdvertisementRepository;
 import com.restapi.armatubanda.repository.ApplicationRepository;
+import com.restapi.armatubanda.repository.BandRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +45,8 @@ public class AdvertisementService {
     private final InvitationService invitationService;
 
     private final ApplicationRepository applicationRepository;
+
+    private final BandRepository bandRepository;
 
     public ResponseEntity<BandAdvertisement> createAd(Musician bandLeader, Band band, AdvertisementRequestDto advertisementRequestDto) throws Exception {
 
@@ -78,7 +82,6 @@ public class AdvertisementService {
         return HttpStatus.OK;
     }
 
-    // TODO: Agregar filtro, cuando el musico es lider de la banda lo muestra como "ELIGIBLE"
     public List<AdvertisementResponseDto> getAdList(List<String> instruments,List<String> genres) {
 
         Musician musicianLogged = this.authenticationService.getMusicianLogged();
@@ -112,8 +115,10 @@ public class AdvertisementService {
             int adId = ad.getAdId();
 
             String invitationStatus = this.invitationService.getInvitationStatus(bandId,musicianLoggedId);
+            Band band = this.bandRepository.findById(bandId).orElseThrow(()-> new UsernameNotFoundException("Band not found with id: "+bandId));
 
-            if(Objects.equals(invitationStatus, "MEMBER")){
+
+            if(Objects.equals(invitationStatus, "MEMBER") || band.getMusicianLeader().getId() == musicianLoggedId){
                 ad.setStatus("MEMBER");
                 adListResponseDto.add(ad);
             }
