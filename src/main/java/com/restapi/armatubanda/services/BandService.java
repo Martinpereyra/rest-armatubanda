@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -29,6 +30,8 @@ public class BandService {
     private final GenreService genreService;
 
     private final EntityManager entityManager;
+
+    private final AuthenticationService authenticationService;
 
 
     public BandCreationDto createBand(BandCreationDto bandCreationDto, Musician bandLeader, MultipartFile file) throws IOException {
@@ -195,5 +198,42 @@ public class BandService {
     public BandCreationDto getBand(int bandId) {
         Band band = this.bandRepository.findById(bandId).orElseThrow(() -> new UsernameNotFoundException("Band not found"));
         return convertToBandCreationDto(band);
+    }
+
+    public ResponseEntity<Post> createPost(String videoUrl, MultipartFile file, int bandId) throws IOException {
+        Band band = bandRepository.findById(bandId).orElseThrow(()->
+                new UsernameNotFoundException("Band not found with ID: " + bandId));
+
+        Musician musicianLogged = this.authenticationService.getMusicianLogged();
+
+        if(band.getMusicianLeader().getId() != musicianLogged.getId()){
+            throw new RuntimeException();
+        }
+        List<Post> posts = band.getBandPosts();
+
+        Image image = null;
+        Post newPost = new Post();
+        if(file != null) {
+            image = uploadProfileImage(file);
+            newPost.setImage(image);
+            posts.add(newPost);
+        }else{
+            if(videoUrl != null && !videoUrl.isEmpty()){
+                newPost.setVideoUrl(videoUrl);
+                posts.add(newPost);
+            }
+        }
+        band.setBandPosts(posts);
+        this.bandRepository.save(band);
+
+        return ResponseEntity.ok(newPost);
+    }
+
+    public ResponseEntity<List<Post>> getPosts(int bandId) {
+        Band band = this.bandRepository.findById(bandId).orElseThrow(()-> new UsernameNotFoundException("Band not found with id: "+bandId));
+        List<Post> bandPost = band.getBandPosts();
+        bandPost.sort(Comparator.comparing(Post::getCreatedOn).reversed());
+        return ResponseEntity.ok(bandPost);
+
     }
 }

@@ -1,11 +1,10 @@
 package com.restapi.armatubanda.controller;
 
 
-import com.restapi.armatubanda.dto.BandCreationDto;
-import com.restapi.armatubanda.dto.BandMemberDto;
-import com.restapi.armatubanda.dto.BandRequestDto;
+import com.restapi.armatubanda.dto.*;
 import com.restapi.armatubanda.model.Band;
 import com.restapi.armatubanda.model.Musician;
+import com.restapi.armatubanda.model.Post;
 import com.restapi.armatubanda.services.AuthenticationService;
 import com.restapi.armatubanda.services.BandService;
 import com.restapi.armatubanda.services.InvitationService;
@@ -112,9 +111,20 @@ public class BandController {
 
     // TODO: Editar perfil de banda
 
-    // TODO: Crear post
+    @PostMapping(value = "/create-post", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<Post> createPost(
+            @RequestParam(value = "bandId", required = true) int bandId,
+            @RequestPart(value= "videoUrl", required = false) String videoUrl,
+            @RequestPart(value = "image", required = false) MultipartFile file
+    ) throws Exception{
+        return bandService.createPost(videoUrl, file,bandId);
+    }
 
-    // TODO: Devolver lista de posts
+
+    @GetMapping(value = "/get-post/{id}")
+    public ResponseEntity<List<Post>> getPosts(@PathVariable int id){
+        return bandService.getPosts(id);
+    }
 
     // TODO: Crear reviews
 
