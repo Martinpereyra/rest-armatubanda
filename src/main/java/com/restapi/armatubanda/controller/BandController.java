@@ -22,6 +22,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -134,5 +135,11 @@ public class BandController {
         return bandService.getBandMembers(bandId);
     }
 
-    // TODO: Editar perfil de banda
+    // TODO: Editar perfil de banda (Controlar con nacho)
+    @PutMapping(value="/edit", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<BandCreationDto> editProfile(@RequestPart("band") BandCreationDto bandDto,
+                                                       @RequestPart(value = "bandImageFile", required = false) MultipartFile file) throws IOException {
+
+        return this.bandService.editProfile(bandDto,file);
+    }
 }

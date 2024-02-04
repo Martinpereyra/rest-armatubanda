@@ -62,9 +62,7 @@ public class MusicianService {
     }
 
     public ResponseEntity<Musician> updateProfileImage(MultipartFile file) throws IOException {
-        var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
-        Musician musician = getMusician(username).orElseThrow(()-> new UsernameNotFoundException("User not found"));
+        Musician musician = this.authenticationService.getMusicianLogged();
         Image image = uploadProfileImage(file);
         musician.setImage(image);
         musicianRepository.save(musician);
@@ -441,6 +439,43 @@ public class MusicianService {
         }
         return HttpStatus.INTERNAL_SERVER_ERROR;
 
+
+    }
+
+    public ResponseEntity<MusicianResponseDto> editProfile(ProfileCreationDto profileInfoDto, MultipartFile file) throws IOException {
+        Musician musician = this.authenticationService.getMusicianLogged();
+
+        if(musician.getId() != profileInfoDto.getMusicianId()){
+            throw new RuntimeException();
+        }
+
+        profileInfoDto.getPersonalInformation().setId(musician.getPersonalInformation().getId());
+        updatePersonalInformation(musician,profileInfoDto.getPersonalInformation());
+
+        profileInfoDto.getContactInformation().setId(musician.getContactInformation().getId());
+        updateContactInformation(musician,profileInfoDto.getContactInformation());
+
+        profileInfoDto.getSkillsInformation().setId(musician.getSkillsInformation().getId());
+        updateSkillsInformation(musician,profileInfoDto.getSkillsInformation());
+
+        profileInfoDto.getEducationInformation().setId(musician.getEducationInformation().getId());
+        updateEducationInformation(musician,profileInfoDto.getEducationInformation());
+
+        profileInfoDto.getCareerInformation().setId(musician.getCareerInformation().getId());
+        updateCareerInformation(musician,profileInfoDto.getCareerInformation());
+
+        profileInfoDto.getBiographyInformation().setId(musician.getBiographyInformation().getId());
+        updateBiographyInformation(musician,profileInfoDto.getBiographyInformation());
+
+        profileInfoDto.getPreferenceInformation().setId(musician.getPreferenceInformation().getId());
+        updatePreferenceInformation(musician,profileInfoDto.getPreferenceInformation());
+
+        Image image = uploadProfileImage(file);
+        musician.setImage(image);
+
+        this.musicianRepository.save(musician);
+
+        return ResponseEntity.ok(convertToMusicianResponseDto(musician));
 
     }
 }

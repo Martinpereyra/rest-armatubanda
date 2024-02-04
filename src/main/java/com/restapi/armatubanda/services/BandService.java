@@ -279,4 +279,36 @@ public class BandService {
         }
         return ResponseEntity.ok(bandMembersList);
     }
+
+    public ResponseEntity<BandCreationDto> editProfile(BandCreationDto bandDto, MultipartFile file) throws IOException {
+        Musician musicianLogged = this.authenticationService.getMusicianLogged();
+        Band band = this.bandRepository.findById(bandDto.getBandId()).orElseThrow(()-> new UsernameNotFoundException("Band not found with id: "+bandDto.getBandId()));
+
+        if(musicianLogged.getId() != band.getMusicianLeader().getId()){
+            throw new RuntimeException();
+        }
+
+        if(bandDto.getBandInfo() != null){
+            bandDto.getBandInfo().setId(band.getBandInfo().getId());
+            band.setBandInfo(bandDto.getBandInfo());
+        }
+        if(bandDto.getBandGenres() != null){
+            List<Genre> genresToSet = this.genreService.getGenreListString(bandDto.getBandGenres());
+            band.setGenres(genresToSet);
+        }
+        if(bandDto.getBandContactInfo() != null){
+            bandDto.getBandContactInfo().setId(band.getBandContactInfo().getId());
+            band.setBandContactInfo(bandDto.getBandContactInfo());
+        }
+        if(file != null){
+            Image image = this.uploadProfileImage(file);
+            band.setImage(image);
+        }
+
+        this.bandRepository.save(band);
+
+        return ResponseEntity.ok(convertToBandCreationDto(band));
+
+
+    }
 }

@@ -114,7 +114,6 @@ public class MusicianController {
         return musicianService.getMusicianLeaderBands(musicianId);
     }
 
-    // TODO: Dejar de ser miembro de una banda
     @DeleteMapping(value = "/leave")
     public HttpStatus leaveBand(
             @RequestParam("bandId") int bandId
@@ -123,7 +122,14 @@ public class MusicianController {
     }
 
 
-    // TODO: Editar perfil del musico
+    // TODO: Editar perfil del musico (Testear si no se rompio nada al agregar musicianId en ProfileCreationDto)
+    @PutMapping(value = "/edit",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<MusicianResponseDto> editProfile(@RequestPart(value = "profileInfoDto") ProfileCreationDto profileInfoDto,
+                                                           @RequestPart(value = "profileImage", required = false)MultipartFile file) throws IOException {
+        return this.musicianService.editProfile(profileInfoDto,file);
+    }
+
+
 
     // TODO: Crear ciudades y paises tablas maestras
 
