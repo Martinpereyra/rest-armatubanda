@@ -6,6 +6,7 @@ import com.restapi.armatubanda.dto.BandMembersDto;
 import com.restapi.armatubanda.dto.BandRequestDto;
 import com.restapi.armatubanda.model.*;
 import com.restapi.armatubanda.repository.BandRepository;
+import com.restapi.armatubanda.repository.MusicianRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
@@ -32,6 +33,8 @@ public class BandService {
     private final EntityManager entityManager;
 
     private final AuthenticationService authenticationService;
+
+    private final MusicianRepository musicianRepository;
 
 
     public BandCreationDto createBand(BandCreationDto bandCreationDto, Musician bandLeader, MultipartFile file) throws IOException {
@@ -235,5 +238,27 @@ public class BandService {
         bandPost.sort(Comparator.comparing(Post::getCreatedOn).reversed());
         return ResponseEntity.ok(bandPost);
 
+    }
+
+    public ResponseEntity<List<Review>> uploadMusicianReview(Review review) {
+        Band band = this.bandRepository.findById(review.getMusicianId()).orElseThrow(()-> new UsernameNotFoundException("Band not found with id "+review.getMusicianId()));
+        Musician reviewer = this.musicianRepository.findById(review.getReviewerId()).orElseThrow(()-> new UsernameNotFoundException("Musician not found with id: "+review.getReviewerId()));
+
+        List<Review> bandReviews = band.getBandReviews();
+
+        if(bandReviews.isEmpty()){
+            bandReviews = new ArrayList<>();
+        }
+        var newReview = Review.builder()
+                .comment(review.getComment())
+                .reviewerId(review.getReviewerId())
+                .reviewerFirstName(reviewer.getPersonalInformation().getName())
+                .reviewerLastName(reviewer.getPersonalInformation().getLastname())
+                .reviewerProfileImage(reviewer.getImage())
+                .build();
+        bandReviews.add(newReview);
+        band.setBandReviews(bandReviews);
+        this.bandRepository.save(band);
+        return ResponseEntity.ok(bandReviews);
     }
 }

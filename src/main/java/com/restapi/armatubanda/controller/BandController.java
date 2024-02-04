@@ -5,6 +5,7 @@ import com.restapi.armatubanda.dto.*;
 import com.restapi.armatubanda.model.Band;
 import com.restapi.armatubanda.model.Musician;
 import com.restapi.armatubanda.model.Post;
+import com.restapi.armatubanda.model.Review;
 import com.restapi.armatubanda.services.AuthenticationService;
 import com.restapi.armatubanda.services.BandService;
 import com.restapi.armatubanda.services.InvitationService;
@@ -109,7 +110,7 @@ public class BandController {
         return bandService.getBandList(name,country,city,genres);
     }
 
-    // TODO: Editar perfil de banda
+
 
     @PostMapping(value = "/create-post", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Post> createPost(
@@ -120,16 +121,18 @@ public class BandController {
         return bandService.createPost(videoUrl, file,bandId);
     }
 
-
     @GetMapping(value = "/get-post/{id}")
     public ResponseEntity<List<Post>> getPosts(@PathVariable int id){
         return bandService.getPosts(id);
     }
 
-    // TODO: Crear reviews
-
-    // TODO: Devolver lista de reviews (GETPost)
+    // TODO: Checkear si esta bien el guardado de la review ya que en banda el musicianId = 0 (tabla review)
+    @PutMapping(value = "/upload-review")
+    public ResponseEntity<List<Review>> uploadMusicianReview (@RequestBody Review review) throws Exception {
+        return bandService.uploadMusicianReview(review);
+    }
 
     // TODO: Devolver lista de miembros de la banda
 
+    // TODO: Editar perfil de banda
 }
