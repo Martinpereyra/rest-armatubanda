@@ -261,4 +261,22 @@ public class BandService {
         this.bandRepository.save(band);
         return ResponseEntity.ok(bandReviews);
     }
+
+    public ResponseEntity<List<BandMembersDto>> getBandMembers(int bandId) {
+        Band band = this.bandRepository.findById(bandId).orElseThrow(()-> new UsernameNotFoundException("Band not found with id "+bandId));
+        List<Musician> musicianList = band.getMembers();
+        List<BandMembersDto> bandMembersList = new ArrayList<>();
+        if(!musicianList.isEmpty()){
+            for (Musician musician:musicianList){
+                BandMembersDto member = BandMembersDto.builder()
+                        .musicianId(musician.getId())
+                        .musicianName(musician.getPersonalInformation().getName())
+                        .musicianLastName(musician.getPersonalInformation().getLastname())
+                        .musicianProfileImage(musician.getImage())
+                        .build();
+                bandMembersList.add(member);
+            }
+        }
+        return ResponseEntity.ok(bandMembersList);
+    }
 }

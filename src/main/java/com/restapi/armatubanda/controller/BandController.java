@@ -99,7 +99,6 @@ public class BandController {
         return HttpStatus.BAD_REQUEST;
     }
 
-
     @GetMapping()
     public ResponseEntity<List<BandCreationDto>> getBandList(
             @RequestParam(value = "name",required = false) String name,
@@ -109,8 +108,6 @@ public class BandController {
     ){
         return bandService.getBandList(name,country,city,genres);
     }
-
-
 
     @PostMapping(value = "/create-post", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Post> createPost(
@@ -132,7 +129,10 @@ public class BandController {
         return bandService.uploadMusicianReview(review);
     }
 
-    // TODO: Devolver lista de miembros de la banda
+    @GetMapping(value = "/members/{bandId}")
+    public ResponseEntity<List<BandMembersDto>> getBandMembers(@PathVariable("bandId") int bandId){
+        return bandService.getBandMembers(bandId);
+    }
 
     // TODO: Editar perfil de banda
 }
