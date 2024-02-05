@@ -124,7 +124,6 @@ public class BandController {
         return bandService.getPosts(id);
     }
 
-    // TODO: Checkear si esta bien el guardado de la review ya que en banda el musicianId = 0 (tabla review)
     @PutMapping(value = "/upload-review")
     public ResponseEntity<List<Review>> uploadMusicianReview (@RequestBody Review review) throws Exception {
         return bandService.uploadMusicianReview(review);
@@ -135,7 +134,6 @@ public class BandController {
         return bandService.getBandMembers(bandId);
     }
 
-    // TODO: Editar perfil de banda (Controlar con nacho)
     @PutMapping(value="/edit", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<BandCreationDto> editProfile(@RequestPart("band") BandCreationDto bandDto,
                                                        @RequestPart(value = "bandImageFile", required = false) MultipartFile file) throws IOException {
