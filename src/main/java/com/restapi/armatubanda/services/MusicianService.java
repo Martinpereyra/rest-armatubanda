@@ -476,6 +476,16 @@ public class MusicianService {
         this.musicianRepository.save(musician);
 
         return ResponseEntity.ok(convertToMusicianResponseDto(musician));
-
     }
+
+    public void enableMusicianAccount(String email){
+        Optional<Musician> musicianOptional = this.musicianRepository.findByEmail(email);
+        if (musicianOptional.isPresent()){
+            Musician musician = musicianOptional.get();
+            musician.setEmailConfirmed(true);
+            this.musicianRepository.save(musician);
+        }
+    }
+
+
 }

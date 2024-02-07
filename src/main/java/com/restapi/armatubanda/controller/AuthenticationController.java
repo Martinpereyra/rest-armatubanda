@@ -36,4 +36,9 @@ public class AuthenticationController {
         return ResponseEntity.ok(service.getUserLogged());
     }
 
+    @GetMapping("/confirm/{token}")
+    public ResponseEntity<UserInfoDto> confirmEmail(@PathVariable("token") String token){
+        return service.confirmEmail(token);
+    }
+
 }
