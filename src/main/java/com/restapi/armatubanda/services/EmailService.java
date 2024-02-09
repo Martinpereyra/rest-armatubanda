@@ -14,14 +14,28 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
 
-    public void sendEmail(String to, String email) {
+    public void sendEmailConfirmation(String to, String email) {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
             helper.setText(email, true);
             helper.setTo(to);
-            helper.setSubject("Confirm your email");
-            helper.setFrom("noreply@armatubanda.com");
+            helper.setSubject("Confirma tu email");
+            helper.setFrom("armatubandaservices@gmail.com");
+            mailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            throw new IllegalStateException("failed to send email");
+        }
+    }
+
+    public void sendEmailReset(String to,String email){
+        try {
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+            helper.setText(email, true);
+            helper.setTo(to);
+            helper.setSubject("Reinicia tu contraseña");
+            helper.setFrom("armatubandaservices@gmail.com");
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
             throw new IllegalStateException("failed to send email");

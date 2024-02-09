@@ -13,7 +13,6 @@ import com.restapi.armatubanda.repository.MusicianRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -22,10 +21,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.restapi.armatubanda.model.Musician;
-
-import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.UUID;
+
 
 @Service
 @RequiredArgsConstructor
@@ -49,9 +46,9 @@ public class AuthenticationService {
         try {
             Musician musicianSaved = musicianRepository.save(musician);
             String token = this.confirmationTokenService.createConfirmationToken(musicianSaved);
-
+            // TODO: Reemplazar con la url del backend
             String link = "http://localhost:8080/api/auth/confirm/"+token;
-            emailService.sendEmail(musician.getEmail(),buildEmail(musician.getEmail(),link));
+            emailService.sendEmailConfirmation(musician.getEmail(),buildEmail(musician.getEmail(),link));
 
 
         } catch (DataIntegrityViolationException e) {
