@@ -50,8 +50,7 @@ public class AuthenticationService {
             Musician musicianSaved = musicianRepository.save(musician);
             String token = this.confirmationTokenService.createConfirmationToken(musicianSaved);
 
-            // TODO: SEND EMAIL
-            String link = "http://localhost:8080/api/auth/confirm?token="+token;
+            String link = "http://localhost:8080/api/auth/confirm/"+token;
             emailService.sendEmail(musician.getEmail(),buildEmail(musician.getEmail(),link));
 
 
@@ -153,8 +152,6 @@ public class AuthenticationService {
             confirmationTokenService.setConfirmedAt(confirmationToken.getConfirmationToken());
             return ResponseEntity.ok(UserInfoDto.builder()
                     .id(confirmationToken.getUser().getId())
-                    .firstName(confirmationToken.getUser().getPersonalInformation().getName())
-                    .lastName(confirmationToken.getUser().getPersonalInformation().getLastname())
                     .user(confirmationToken.getUser().getEmail())
                     .build());
         }else{
@@ -163,7 +160,11 @@ public class AuthenticationService {
     }
 
     private String buildEmail(String name, String link) {
-        return "<div>Thank you for registering, " + name + "! Please click on the below link to activate your account: <a href=\"" + link + "\">Activate Now</a></div>";
+        return "<div>Gracias por registrarte en ArmaTuBanda, " + name + "! Por favor clickea en el siguiente link para activar tu cuenta y empezar a usar la plataforma: <a href=\"" + link + "\">Confirmar Email</a></div>";
     }
 
+    public boolean checkEmailConfirmation() {
+        Musician musicianLogged = this.getMusicianLogged();
+        return musicianLogged.isEmailConfirmed();
+    }
 }

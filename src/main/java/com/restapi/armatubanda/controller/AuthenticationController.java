@@ -41,4 +41,10 @@ public class AuthenticationController {
         return service.confirmEmail(token);
     }
 
+    @GetMapping("/check-confirmation")
+    public boolean checkEmailConfirmation(){
+        return service.checkEmailConfirmation();
+    }
+
+
 }
