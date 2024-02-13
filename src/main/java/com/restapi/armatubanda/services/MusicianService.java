@@ -225,7 +225,7 @@ public class MusicianService {
         for(Post post : listPost){
             var postDto = PostDto.builder()
                     .Id(post.getId())
-                    .urlVideo(post.getVideoUrl())
+                    .videoUrl(post.getVideoUrl())
                     .image(post.getImage())
                     .createdOn(post.getCreatedOn())
                     .build();
