@@ -108,6 +108,7 @@ public class MusicianService {
         Join<SkillsInformation, Genre> genres = skills.join("genres", JoinType.LEFT);
         Join<SkillsInformation, InstrumentExperience> instrumentExperience = skills.join("instrumentExperience", JoinType.LEFT);
         Join<InstrumentExperience, Instrument> instruments = instrumentExperience.join("instrument", JoinType.LEFT);
+        Join<Musician, PreferenceInformation> preferences = musician.join("preferenceInformation", JoinType.LEFT);
 
         List<Predicate> predicates = new ArrayList<>();
 
@@ -128,6 +129,9 @@ public class MusicianService {
         }
         if (experience != null && !experience.isEmpty()) {
             predicates.add(cb.equal(skills.get("generalExperience"), Experience.valueOf(experience)));
+        }
+        if (lookingBand != null) {
+            predicates.add(cb.equal(preferences.get("lookingBands"), lookingBand));
         }
 
         cq.where(predicates.toArray(new Predicate[0]));
