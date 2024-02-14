@@ -5,6 +5,7 @@ import com.restapi.armatubanda.model.*;
 import com.restapi.armatubanda.repository.BandRepository;
 import com.restapi.armatubanda.repository.InvitationRepository;
 import com.restapi.armatubanda.repository.MusicianRepository;
+import com.restapi.armatubanda.repository.PostRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.TypedQuery;
@@ -13,12 +14,9 @@ import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -44,6 +42,7 @@ public class MusicianService {
 
     private final InvitationRepository invitationRepository;
 
+    private final PostRepository postRepository;
 
     public Optional<Musician> getMusician(String username){
         return musicianRepository.findByEmail(username);
@@ -249,6 +248,20 @@ public class MusicianService {
 
         return createMusicianProfile(musicianToSave, profileInfoDto, image);
 
+    }
+
+    public void deletePost (int id, int userId) throws Exception {
+        Musician musician = musicianRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userId));
+        Post postToDelete = musician.getPosts().stream().filter(p -> p.getId() == id).findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("Post not found with id: " + id));
+        musician.getPosts().remove(postToDelete);
+        try {
+            this.postRepository.deleteById(postToDelete.getId());
+        }
+        catch (Exception e){
+            throw new Exception(e);
+        }
     }
 
     private MusicianResponseDto createMusicianProfile(Musician musicianToSave, ProfileCreationDto profileInfoDto, Image image) {

@@ -127,7 +127,13 @@ public class MusicianController {
         return this.musicianService.editProfile(profileInfoDto,file);
     }
 
-
+    @DeleteMapping(value = "delete-post/{id}")
+    public ResponseEntity<Void> deletePost(@PathVariable int id) throws Exception {
+        UserInfoDto user = authenticationController.getUserLogged().getBody();
+        assert user != null;
+        musicianService.deletePost(id, user.getId());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     // TODO: Crear ciudades y paises tablas maestras
 
