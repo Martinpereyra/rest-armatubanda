@@ -82,7 +82,7 @@ public class AdvertisementService {
         return HttpStatus.OK;
     }
 
-    public List<AdvertisementResponseDto> getAdList(List<String> instruments,List<String> genres) {
+    public List<AdvertisementResponseDto> getAdList(List<String> instruments,List<String> genres, String name) {
 
         Musician musicianLogged = this.authenticationService.getMusicianLogged();
         int musicianLoggedId = musicianLogged.getId();
@@ -99,6 +99,10 @@ public class AdvertisementService {
 
         if(instruments != null && !instruments.isEmpty()){
             predicates.add(advertisementRoot.get("instruments").get("name").in(instruments));
+        }
+
+        if (name != null && !name.isBlank()) {
+            predicates.add((cb.like(advertisementRoot.get("band").get("bandInfo").get("name"), "%" + name + "%")));
         }
 
         cq.where(predicates.toArray(new Predicate[0]));
