@@ -120,7 +120,7 @@ public class AdvertisementService {
 
             String invitationStatus = this.invitationService.getInvitationStatus(bandId,musicianLoggedId);
             Band band = this.bandRepository.findById(bandId).orElseThrow(()-> new UsernameNotFoundException("Band not found with id: "+bandId));
-
+            ad.setBandName(band.getBandInfo().getName());
 
             if(Objects.equals(invitationStatus, "MEMBER") || band.getMusicianLeader().getId() == musicianLoggedId){
                 ad.setStatus("MEMBER");
