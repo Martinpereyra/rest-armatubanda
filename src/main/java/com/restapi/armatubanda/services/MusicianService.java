@@ -191,6 +191,7 @@ public class MusicianService {
         Musician musicianToFind = musicianRepository.findById(id).orElseThrow(()-> new UsernameNotFoundException("Musician not found with ID: " + id));
 
         var musicianInformation = MusicianInformationResponseDto.builder()
+                .biographyInformation(musicianToFind.getBiographyInformation())
                 .careerInformation(musicianToFind.getCareerInformation())
                 .educationInformation(musicianToFind.getEducationInformation())
                 .preferenceInformation(musicianToFind.getPreferenceInformation())
