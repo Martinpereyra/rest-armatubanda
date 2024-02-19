@@ -18,8 +18,9 @@ import java.util.List;
 public class AdvertisementResponseDto {
 
     public int adId;
-
     public String adName;
+
+    public String bandName;
 
     public String description;
 

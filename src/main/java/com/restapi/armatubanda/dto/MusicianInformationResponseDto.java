@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MusicianInformationResponseDto {
 
+    public BiographyInformation biographyInformation;
     public CareerInformation careerInformation;
     public EducationInformation educationInformation;
     public SkillsInformation skillsInformation;

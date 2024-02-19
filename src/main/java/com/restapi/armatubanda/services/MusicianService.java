@@ -5,6 +5,7 @@ import com.restapi.armatubanda.model.*;
 import com.restapi.armatubanda.repository.BandRepository;
 import com.restapi.armatubanda.repository.InvitationRepository;
 import com.restapi.armatubanda.repository.MusicianRepository;
+import com.restapi.armatubanda.repository.PostRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.TypedQuery;
@@ -13,12 +14,9 @@ import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -44,6 +42,7 @@ public class MusicianService {
 
     private final InvitationRepository invitationRepository;
 
+    private final PostRepository postRepository;
 
     public Optional<Musician> getMusician(String username){
         return musicianRepository.findByEmail(username);
@@ -109,6 +108,7 @@ public class MusicianService {
         Join<SkillsInformation, Genre> genres = skills.join("genres", JoinType.LEFT);
         Join<SkillsInformation, InstrumentExperience> instrumentExperience = skills.join("instrumentExperience", JoinType.LEFT);
         Join<InstrumentExperience, Instrument> instruments = instrumentExperience.join("instrument", JoinType.LEFT);
+        Join<Musician, PreferenceInformation> preferences = musician.join("preferenceInformation", JoinType.LEFT);
 
         List<Predicate> predicates = new ArrayList<>();
 
@@ -129,6 +129,9 @@ public class MusicianService {
         }
         if (experience != null && !experience.isEmpty()) {
             predicates.add(cb.equal(skills.get("generalExperience"), Experience.valueOf(experience)));
+        }
+        if (lookingBand != null) {
+            predicates.add(cb.equal(preferences.get("lookingBands"), lookingBand));
         }
 
         cq.where(predicates.toArray(new Predicate[0]));
@@ -188,6 +191,7 @@ public class MusicianService {
         Musician musicianToFind = musicianRepository.findById(id).orElseThrow(()-> new UsernameNotFoundException("Musician not found with ID: " + id));
 
         var musicianInformation = MusicianInformationResponseDto.builder()
+                .biographyInformation(musicianToFind.getBiographyInformation())
                 .careerInformation(musicianToFind.getCareerInformation())
                 .educationInformation(musicianToFind.getEducationInformation())
                 .preferenceInformation(musicianToFind.getPreferenceInformation())
@@ -225,7 +229,7 @@ public class MusicianService {
         for(Post post : listPost){
             var postDto = PostDto.builder()
                     .Id(post.getId())
-                    .urlVideo(post.getVideoUrl())
+                    .videoUrl(post.getVideoUrl())
                     .image(post.getImage())
                     .createdOn(post.getCreatedOn())
                     .build();
@@ -249,6 +253,20 @@ public class MusicianService {
 
         return createMusicianProfile(musicianToSave, profileInfoDto, image);
 
+    }
+
+    public void deletePost (int id, int userId) throws Exception {
+        Musician musician = musicianRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userId));
+        Post postToDelete = musician.getPosts().stream().filter(p -> p.getId() == id).findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("Post not found with id: " + id));
+        musician.getPosts().remove(postToDelete);
+        try {
+            this.postRepository.deleteById(postToDelete.getId());
+        }
+        catch (Exception e){
+            throw new Exception(e);
+        }
     }
 
     private MusicianResponseDto createMusicianProfile(Musician musicianToSave, ProfileCreationDto profileInfoDto, Image image) {

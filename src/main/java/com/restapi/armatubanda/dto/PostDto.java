@@ -14,7 +14,7 @@ import java.time.Instant;
 @AllArgsConstructor
 public class PostDto {
     private int Id;
-    private String urlVideo;
+    private String videoUrl;
     private Image image;
     private Instant createdOn;
 }

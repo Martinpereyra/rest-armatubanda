@@ -82,7 +82,7 @@ public class AdvertisementService {
         return HttpStatus.OK;
     }
 
-    public List<AdvertisementResponseDto> getAdList(List<String> instruments,List<String> genres) {
+    public List<AdvertisementResponseDto> getAdList(List<String> instruments,List<String> genres, String name) {
 
         Musician musicianLogged = this.authenticationService.getMusicianLogged();
         int musicianLoggedId = musicianLogged.getId();
@@ -101,6 +101,10 @@ public class AdvertisementService {
             predicates.add(advertisementRoot.get("instruments").get("name").in(instruments));
         }
 
+        if (name != null && !name.isBlank()) {
+            predicates.add((cb.like(advertisementRoot.get("band").get("bandInfo").get("name"), "%" + name + "%")));
+        }
+
         cq.where(predicates.toArray(new Predicate[0]));
         TypedQuery<BandAdvertisement> query = entityManager.createQuery(cq);
 
@@ -116,7 +120,7 @@ public class AdvertisementService {
 
             String invitationStatus = this.invitationService.getInvitationStatus(bandId,musicianLoggedId);
             Band band = this.bandRepository.findById(bandId).orElseThrow(()-> new UsernameNotFoundException("Band not found with id: "+bandId));
-
+            ad.setBandName(band.getBandInfo().getName());
 
             if(Objects.equals(invitationStatus, "MEMBER") || band.getMusicianLeader().getId() == musicianLoggedId){
                 ad.setStatus("MEMBER");
