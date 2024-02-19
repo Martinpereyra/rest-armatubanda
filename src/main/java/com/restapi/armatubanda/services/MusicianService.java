@@ -142,7 +142,9 @@ public class MusicianService {
         List<Musician> musicians = query.getResultList();
 
         musicians.forEach(musicianArray -> {
-            responseMusicians.add(createMusicianResponseDto(musicianArray));
+            if (musicianArray.isProfileSet()) {
+                responseMusicians.add(createMusicianResponseDto(musicianArray));
+            }
         });
 
         return ResponseEntity.ok(responseMusicians);
