@@ -55,7 +55,7 @@ public class PasswordResetService {
         return token.getExpiresAt().isAfter(LocalDateTime.now());
     }
 
-    public String changeUserPassword(String token, String newPassword){
+    public String changeUserPassword(String token, String newPassword) throws Exception {
         Optional<PasswordResetToken> passwordResetTokenOptional = this.passwordResetTokenRepository.findByToken(token);
         if(passwordResetTokenOptional.isPresent()){
             PasswordResetToken passwordResetToken = passwordResetTokenOptional.get();
@@ -65,10 +65,10 @@ public class PasswordResetService {
                 musicianRepository.save(musician);
                 return "Password changed";
             }else{
-                return "Token expired";
+                throw new Exception();
             }
         }else{
-            return "There is no token";
+            throw new Exception();
         }
     }
 

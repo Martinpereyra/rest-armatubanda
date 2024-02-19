@@ -56,7 +56,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/reset-password")
-    public String resetPassword(@RequestBody PasswordResetDto passwordResetDto){
+    public String resetPassword(@RequestBody PasswordResetDto passwordResetDto) throws Exception {
         String token = passwordResetDto.getToken();
         String newPassword = passwordResetDto.getNewPassword();
         return this.passwordResetService.changeUserPassword(token,newPassword);
