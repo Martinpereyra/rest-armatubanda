@@ -109,6 +109,9 @@ public class AuthenticationService {
                     firstName = musician.getPersonalInformation().getName();
                     lastName = musician.getPersonalInformation().getLastname();
                 }
+
+                boolean emailVerifies = checkEmailConfirmation();
+
                 return UserInfoDto.builder()
                         .id(musician.getId())
                         .user(username)
@@ -116,6 +119,7 @@ public class AuthenticationService {
                         .firstName(firstName)
                         .lastName(lastName)
                         .profileImage(musician.getImage())
+                        .emailVerified(emailVerifies)
                         .build();
             }
         } catch (Exception e) {
