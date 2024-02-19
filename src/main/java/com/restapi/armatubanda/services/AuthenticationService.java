@@ -7,6 +7,7 @@ import com.restapi.armatubanda.dto.UserInfoDto;
 import com.restapi.armatubanda.exception.GenericException;
 import com.restapi.armatubanda.exception.InvalidCredentialsException;
 import com.restapi.armatubanda.exception.ResourceNotFoundException;
+import com.restapi.armatubanda.model.ConfirmationToken;
 import com.restapi.armatubanda.model.Role;
 import com.restapi.armatubanda.repository.MusicianRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.restapi.armatubanda.model.Musician;
+import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -28,16 +31,26 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final ConfirmationTokenService confirmationTokenService;
+    private final EmailService emailService;
 
     public AuthenticationResponse register(RegisterRequest request) {
+
         var musician = Musician.builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
                 .isProfileSet(false)
+                .isEmailConfirmed(false)
                 .build();
         try {
-            musicianRepository.save(musician);
+            Musician musicianSaved = musicianRepository.save(musician);
+            String token = this.confirmationTokenService.createConfirmationToken(musicianSaved);
+            // TODO: Reemplazar con la url del backend
+            String link = "http://localhost:8080/api/auth/confirm/"+token;
+            emailService.sendEmailConfirmation(musician.getEmail(),buildEmail(musician.getEmail(),link));
+
+
         } catch (DataIntegrityViolationException e) {
             throw new DataIntegrityViolationException("El email " + request.getEmail() + " ya fue usado.");
         }
@@ -96,6 +109,9 @@ public class AuthenticationService {
                     firstName = musician.getPersonalInformation().getName();
                     lastName = musician.getPersonalInformation().getLastname();
                 }
+
+                boolean emailVerifies = checkEmailConfirmation();
+
                 return UserInfoDto.builder()
                         .id(musician.getId())
                         .user(username)
@@ -103,6 +119,7 @@ public class AuthenticationService {
                         .firstName(firstName)
                         .lastName(lastName)
                         .profileImage(musician.getImage())
+                        .emailVerified(emailVerifies)
                         .build();
             }
         } catch (Exception e) {
@@ -123,5 +140,32 @@ public class AuthenticationService {
             throw new GenericException("Hubo un error. Por favor inténtalo de nuevo más tarde.");
         }
         throw new ResourceNotFoundException("Usuario no encontrado.");
+    }
+
+    public ResponseEntity<UserInfoDto> confirmEmail(String token) {
+        Optional<ConfirmationToken> confirmationTokenOptional = confirmationTokenService.getToken(token);
+
+        if(confirmationTokenOptional.isEmpty()){
+            throw new RuntimeException();
+        }
+        ConfirmationToken confirmationToken = confirmationTokenOptional.get();
+        if(confirmationTokenService.isTokenValid(confirmationToken.getConfirmationToken())){
+            confirmationTokenService.setConfirmedAt(confirmationToken.getConfirmationToken());
+            return ResponseEntity.ok(UserInfoDto.builder()
+                    .id(confirmationToken.getUser().getId())
+                    .user(confirmationToken.getUser().getEmail())
+                    .build());
+        }else{
+            throw new RuntimeException();
+        }
+    }
+
+    private String buildEmail(String name, String link) {
+        return "<div>Gracias por registrarte en ArmaTuBanda, " + name + "! Por favor clickea en el siguiente link para activar tu cuenta y empezar a usar la plataforma: <a href=\"" + link + "\">Confirmar Email</a></div>";
+    }
+
+    public boolean checkEmailConfirmation() {
+        Musician musicianLogged = this.getMusicianLogged();
+        return musicianLogged.isEmailConfirmed();
     }
 }

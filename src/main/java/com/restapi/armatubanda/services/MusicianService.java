@@ -142,7 +142,9 @@ public class MusicianService {
         List<Musician> musicians = query.getResultList();
 
         musicians.forEach(musicianArray -> {
-            responseMusicians.add(createMusicianResponseDto(musicianArray));
+            if (musicianArray.isProfileSet()) {
+                responseMusicians.add(createMusicianResponseDto(musicianArray));
+            }
         });
 
         return ResponseEntity.ok(responseMusicians);
@@ -494,6 +496,16 @@ public class MusicianService {
         this.musicianRepository.save(musician);
 
         return ResponseEntity.ok(convertToMusicianResponseDto(musician));
-
     }
+
+    public void enableMusicianAccount(String email){
+        Optional<Musician> musicianOptional = this.musicianRepository.findByEmail(email);
+        if (musicianOptional.isPresent()){
+            Musician musician = musicianOptional.get();
+            musician.setEmailConfirmed(true);
+            this.musicianRepository.save(musician);
+        }
+    }
+
+
 }

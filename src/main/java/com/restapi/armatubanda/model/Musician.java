@@ -52,6 +52,9 @@ public class Musician implements UserDetails {
 
     private boolean isProfileSet;
 
+    @Column()
+    private boolean isEmailConfirmed;
+
     @OneToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "personal_information_id")
     private PersonalInformation personalInformation;
