@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/genre")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://utn-armatubanda.netlify.app")
 public class GenreController {
 
     private final GenreService genreService;
