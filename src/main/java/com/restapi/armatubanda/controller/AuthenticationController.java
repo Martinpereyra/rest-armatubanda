@@ -51,7 +51,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/reset-password-request")
-    public HttpStatus requestPasswordReset(@RequestParam String email){
+    public HttpStatus requestPasswordReset(@RequestBody String email){
         return this.passwordResetService.createPasswordResetToken(email);
     }
 
