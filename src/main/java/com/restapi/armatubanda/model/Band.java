@@ -60,5 +60,4 @@ public class Band {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Review> bandReviews;
 
-
 }
