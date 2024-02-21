@@ -120,6 +120,7 @@ public class AuthenticationService {
                         .lastName(lastName)
                         .profileImage(musician.getImage())
                         .emailVerified(emailVerifies)
+                        .role(musician.getRole().name())
                         .build();
             }
         } catch (Exception e) {

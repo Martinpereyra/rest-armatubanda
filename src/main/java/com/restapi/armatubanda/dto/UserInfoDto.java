@@ -19,4 +19,5 @@ public class UserInfoDto {
     private String lastName;
     private Image profileImage;
     private boolean emailVerified;
+    private String role;
 }
