@@ -5,6 +5,7 @@ import com.restapi.armatubanda.dto.BandCreationDto;
 import com.restapi.armatubanda.dto.BandMembersDto;
 import com.restapi.armatubanda.dto.BandRequestDto;
 import com.restapi.armatubanda.model.*;
+import com.restapi.armatubanda.repository.AdvertisementRepository;
 import com.restapi.armatubanda.repository.BandRepository;
 import com.restapi.armatubanda.repository.MusicianRepository;
 import jakarta.persistence.EntityManager;
@@ -35,6 +36,8 @@ public class BandService {
     private final AuthenticationService authenticationService;
 
     private final MusicianRepository musicianRepository;
+
+    private final AdvertisementRepository advertisementRepository;
 
 
     public BandCreationDto createBand(BandCreationDto bandCreationDto, Musician bandLeader, MultipartFile file) throws IOException {
@@ -124,6 +127,7 @@ public class BandService {
     }
 
     public void deleteBand(Band bandToDelete) {
+        this.advertisementRepository.deleteByBandId(bandToDelete.getId());
         this.bandRepository.delete(bandToDelete);
     }
 

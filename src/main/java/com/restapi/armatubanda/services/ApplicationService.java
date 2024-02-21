@@ -8,6 +8,7 @@ import com.restapi.armatubanda.model.BandAdvertisement;
 import com.restapi.armatubanda.model.Musician;
 import com.restapi.armatubanda.model.MusicianApplication;
 import com.restapi.armatubanda.repository.ApplicationRepository;
+import com.restapi.armatubanda.repository.InvitationRepository;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ public class ApplicationService {
     private final AdvertisementService advertisementService;
     private final AuthenticationService authenticationService;
     private final BandService bandService;
+    private final InvitationRepository invitationRepository;
     public HttpStatus createApplication(ApplicationRequestDto applicationRequestDto) {
         Musician musician = this.authenticationService.getMusicianLogged();
         BandAdvertisement bandAdvertisement = this.advertisementService.getAdvertisement(applicationRequestDto.getIdApplication());
@@ -85,6 +87,7 @@ public class ApplicationService {
             Musician musician = musicianApplication.getMusician();
             if(this.bandService.addMember(musician,band)){
                 this.applicationRepository.delete(musicianApplication);
+                this.invitationRepository.deleteByBandIdAndMusicianId(band.getId(), musician.getId());
                 return HttpStatus.OK;
             }else {
                 throw new RuntimeException();

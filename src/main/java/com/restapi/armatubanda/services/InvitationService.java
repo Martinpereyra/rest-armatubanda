@@ -5,6 +5,8 @@ import com.restapi.armatubanda.dto.InvitationStatusDto;
 import com.restapi.armatubanda.model.Band;
 import com.restapi.armatubanda.model.Invitation;
 import com.restapi.armatubanda.model.Musician;
+import com.restapi.armatubanda.model.MusicianApplication;
+import com.restapi.armatubanda.repository.ApplicationRepository;
 import com.restapi.armatubanda.repository.BandRepository;
 import com.restapi.armatubanda.repository.InvitationRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,8 @@ public class InvitationService {
 
     private final MusicianService musicianService;
 
+    private final ApplicationRepository applicationRepository;
+
 
     public Invitation createInvitation(Invitation invitation){
         return this.invitationRepository.save(invitation);
@@ -46,6 +50,7 @@ public class InvitationService {
                 bandMembers.add(musicianToSave);
                 bandToSave.setMembers(bandMembers);
                 this.bandService.save(bandToSave);
+                this.applicationRepository.deletePendingApplications(bandToSave.getId(), musicianToSave.getId());
                 Invitation invitationTemp = this.invitationRepository.save(invitationTosave);
                 var invitationReturned = InvitationStatusDto.builder()
                         .invitationId(invitationTemp.getId())
