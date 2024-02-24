@@ -35,11 +35,12 @@ public class MusicianController {
             @RequestParam(value = "name",required = false) String name,
             @RequestParam(value = "city",required = false) String city,
             @RequestParam(value = "country",required = false) String country,
+            @RequestParam(value = "state",required = false) String state,
             @RequestParam(value = "genres",required = false) List<String> genres,
             @RequestParam(value = "instruments",required = false) List<String> instruments,
             @RequestParam(value = "experience",required = false) String experience,
             @RequestParam(value = "lookingBand",required = false) Boolean lookingBand) {
-        return musicianService.getMusiciansList(name,city,country,genres,instruments,experience,lookingBand);
+        return musicianService.getMusiciansList(name,city,country,state,genres,instruments,experience,lookingBand);
     }
 
 

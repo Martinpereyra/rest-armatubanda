@@ -40,6 +40,8 @@ public class BandInfo {
 
     private String city;
 
+    private String state;
+
     @Temporal(TemporalType.DATE)
     private Date creationDate;
 }

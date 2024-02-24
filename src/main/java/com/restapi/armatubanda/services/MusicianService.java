@@ -96,6 +96,7 @@ public class MusicianService {
             String name,
             String city,
             String country,
+            String state,
             List<String> musicianGenres,
             List<String> musicianInstruments,
             String experience,
@@ -120,6 +121,9 @@ public class MusicianService {
         }
         if(country != null && !country.isEmpty()){
             predicates.add(cb.like(musician.get("personalInformation").get("country"),"%" + country + "%"));
+        }
+        if(state != null && !state.isEmpty()){
+            predicates.add(cb.like(musician.get("personalInformation").get("state"),"%" + state + "%"));
         }
         if (musicianGenres != null && !musicianGenres.isEmpty()) {
             predicates.add(genres.get("name").in(musicianGenres));

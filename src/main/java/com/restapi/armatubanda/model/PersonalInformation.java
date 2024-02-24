@@ -45,6 +45,7 @@ public class PersonalInformation {
 
     private String country;
     private String city;
+    private String state;
 
 
 }
