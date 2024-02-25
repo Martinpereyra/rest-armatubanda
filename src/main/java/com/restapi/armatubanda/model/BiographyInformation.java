@@ -29,7 +29,7 @@ public class BiographyInformation {
     @JsonIgnore
     private int id;
 
-    @Column(length = 256)
+    @Column(length = 1000)
     private String bio;
 
 }

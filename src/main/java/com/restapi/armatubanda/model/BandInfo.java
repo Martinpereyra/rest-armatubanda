@@ -34,6 +34,8 @@ public class BandInfo {
 
     private String name;
 
+
+    @Column(length = 1000)
     private String description;
 
     private String country;
