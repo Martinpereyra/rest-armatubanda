@@ -104,10 +104,11 @@ public class BandController {
     public ResponseEntity<List<BandCreationDto>> getBandList(
             @RequestParam(value = "name",required = false) String name,
             @RequestParam(value = "country",required = false) String country,
+            @RequestParam(value = "state",required = false) String state,
             @RequestParam(value = "city",required = false) String city,
             @RequestParam(value = "genres",required = false) List<String> genres
     ){
-        return bandService.getBandList(name,country,city,genres);
+        return bandService.getBandList(name,country,state,city,genres);
     }
 
     @PostMapping(value = "/create-post", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})

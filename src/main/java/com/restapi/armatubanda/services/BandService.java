@@ -138,6 +138,7 @@ public class BandService {
     public ResponseEntity<List<BandCreationDto>> getBandList(
             String name,
             String country,
+            String state,
             String city,
             List<String> genres
     ) {
@@ -153,6 +154,9 @@ public class BandService {
 
         if(country != null && !country.isEmpty()){
             predicates.add(cb.like(band.get("bandInfo").get("country"),"%" + country + "%"));
+        }
+        if(state != null && !state.isEmpty()){
+            predicates.add(cb.like(band.get("bandInfo").get("state"),"%"+ state + "%"));
         }
 
         if(city != null && !city.isEmpty()){
