@@ -141,4 +141,13 @@ public class BandController {
 
         return this.bandService.editProfile(bandDto,file);
     }
+
+
+    @DeleteMapping(value = "delete-post/{bandId}/{id}")
+    public ResponseEntity<Void> deletePost(@PathVariable int id,@PathVariable int bandId) throws Exception {
+        Musician musician = authenticationService.getMusicianLogged();
+        assert musician != null;
+        bandService.deletePost(bandId,id, musician);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

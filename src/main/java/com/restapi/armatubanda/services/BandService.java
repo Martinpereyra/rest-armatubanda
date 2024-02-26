@@ -8,7 +8,9 @@ import com.restapi.armatubanda.model.*;
 import com.restapi.armatubanda.repository.AdvertisementRepository;
 import com.restapi.armatubanda.repository.BandRepository;
 import com.restapi.armatubanda.repository.MusicianRepository;
+import com.restapi.armatubanda.repository.PostRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,8 @@ public class BandService {
     private final MusicianRepository musicianRepository;
 
     private final AdvertisementRepository advertisementRepository;
+
+    private final PostRepository postRepository;
 
 
     public BandCreationDto createBand(BandCreationDto bandCreationDto, Musician bandLeader, MultipartFile file) throws IOException {
@@ -318,5 +322,21 @@ public class BandService {
         return ResponseEntity.ok(convertToBandCreationDto(band));
 
 
+    }
+
+    public void deletePost(int bandId, int id, Musician musician) throws Exception {
+        Band band = bandRepository.findById(bandId).orElseThrow(()-> new UsernameNotFoundException("Band not found"));
+        if (band.getMusicianLeader().getId() != musician.getId()){
+            throw new RuntimeException();
+        }
+        Post postToDelete = band.getBandPosts().stream().filter(p -> p.getId() == id).findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("Post not found with id: " + id));
+        band.getBandPosts().remove(postToDelete);
+        try {
+            this.postRepository.deleteById(postToDelete.getId());
+        }
+        catch (Exception e){
+            throw new Exception(e);
+        }
     }
 }

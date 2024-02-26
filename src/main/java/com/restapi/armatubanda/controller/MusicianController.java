@@ -136,7 +136,4 @@ public class MusicianController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    // TODO: Crear ciudades y paises tablas maestras
-
-
 }
