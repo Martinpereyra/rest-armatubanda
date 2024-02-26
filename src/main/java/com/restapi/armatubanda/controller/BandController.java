@@ -143,7 +143,7 @@ public class BandController {
     }
 
 
-    @DeleteMapping(value = "delete-post/{bandId}/{id}")
+    @DeleteMapping(value = "/delete-post/{bandId}/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable int id,@PathVariable int bandId) throws Exception {
         Musician musician = authenticationService.getMusicianLogged();
         assert musician != null;
