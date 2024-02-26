@@ -8,7 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/geo")
-@CrossOrigin(origins = "https://utn-armatubanda.netlify.app")
+@CrossOrigin(origins = "http://localhost:4200")
 @RequiredArgsConstructor
 public class GeographyController {
     private final GeographyService geographyService;

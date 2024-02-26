@@ -47,7 +47,7 @@ public class AuthenticationService {
             Musician musicianSaved = musicianRepository.save(musician);
             String token = this.confirmationTokenService.createConfirmationToken(musicianSaved);
             // TODO: Reemplazar con la url del backend
-            String link = "https://utn-armatubanda.netlify.app/auth/confirm/"+token;
+            String link = "http://localhost:4200/auth/confirm/"+token;
             emailService.sendEmailConfirmation(musician.getEmail(),buildEmail(musician.getEmail(),link));
 
 

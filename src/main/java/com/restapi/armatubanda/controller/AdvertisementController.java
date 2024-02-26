@@ -22,7 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/ad")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://utn-armatubanda.netlify.app")
+@CrossOrigin(origins = "http://localhost:4200")
 public class AdvertisementController {
 
     private final AdvertisementService advertisementService;

@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/application")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://utn-armatubanda.netlify.app")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ApplicationController {
 
     private final ApplicationService applicationService;

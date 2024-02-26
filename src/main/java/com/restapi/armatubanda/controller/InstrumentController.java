@@ -10,7 +10,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/instrument")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://utn-armatubanda.netlify.app")
+@CrossOrigin(origins = "http://localhost:4200")
 public class InstrumentController{
     private final InstrumentService instrumentService;
 
