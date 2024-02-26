@@ -27,7 +27,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/bands")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "https://utn-armatubanda.netlify.app")
 @RequiredArgsConstructor
 public class BandController {
 

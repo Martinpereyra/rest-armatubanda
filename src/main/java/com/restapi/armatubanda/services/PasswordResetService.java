@@ -43,7 +43,7 @@ public class PasswordResetService {
 
     public void sendPasswordResetMail(String userEmail, String token){
         // TODO: Este link que se envia por email tiene que redireccionar a una vista del front junto con el parametro token para luego enviar el token y la password al backend
-        String resetLink = "http://localhost:4200/auth/reset-password/" + token;
+        String resetLink = "https://utn-armatubanda.netlify.app/auth/reset-password/" + token;
         emailService.sendEmailReset(userEmail,buildEmail(userEmail,resetLink));
     }
 
